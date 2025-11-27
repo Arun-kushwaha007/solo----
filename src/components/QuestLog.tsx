@@ -4,9 +4,26 @@ import { CheckCircle, AlertTriangle, Gift } from 'lucide-react';
 import clsx from 'clsx';
 import { useGame } from '../context/GameContext';
 import { CATEGORY_INFO } from '../types';
+import { celebrateQuestCompletion } from '../utils/celebrations';
+import { showQuestCompleteToast, showTaskUpdateToast } from '../components/ToastProvider';
 
 export const QuestLog: React.FC = () => {
   const { quests, updateTaskProgress, completeQuest } = useGame();
+
+  const handleTaskClick = async (questId: number, taskId: string, taskLabel: string, current: number, target: number) => {
+    await updateTaskProgress(questId, taskId, 1);
+    showTaskUpdateToast(taskLabel, current + 1, target);
+  };
+
+  const handleQuestComplete = async (questId: number, questTitle: string, xpReward: number, goldReward: number) => {
+    const result = await completeQuest(questId);
+    celebrateQuestCompletion();
+    showQuestCompleteToast(questTitle, xpReward, goldReward);
+    
+    if (result.leveledUp) {
+      // Level up celebration will be handled in GameContext
+    }
+  };
 
   return (
     <div className="h-full flex flex-col gap-4 sm:gap-6">
@@ -82,11 +99,11 @@ export const QuestLog: React.FC = () => {
 
                     return (
                       <div 
-                        key={task.id} 
-                        className={clsx("space-y-1", !quest.completed && "cursor-pointer hover:opacity-80 active:opacity-60")}
-                        onClick={() => !quest.completed && updateTaskProgress(quest.id, task.id, 1)}
-                        data-testid={`task-${task.id}`}
-                      >
+                      key={task.id} 
+                      className={clsx("space-y-1", !quest.completed && "cursor-pointer hover:opacity-80 active:opacity-60")}
+                      onClick={() => !quest.completed && handleTaskClick(quest.id, task.id, task.label, task.current, task.target)}
+                      data-testid={`task-${task.id}`}
+                    >
                         <div className="flex justify-between text-xs sm:text-sm gap-2">
                           <span className={clsx("font-mono truncate", isDone ? "text-gray-500 line-through" : "text-white")}>
                             {task.label}
@@ -115,7 +132,7 @@ export const QuestLog: React.FC = () => {
                   <motion.button
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    onClick={() => completeQuest(quest.id)}
+                    onClick={() => handleQuestComplete(quest.id, quest.title, quest.rewards.xp, quest.rewards.gold)}
                     className="mt-3 sm:mt-4 w-full py-2 sm:py-3 bg-system-blue text-black font-bold rounded shadow-glow-blue flex items-center justify-center gap-2 hover:bg-white transition-colors text-sm sm:text-base"
                     data-testid="claim-reward-btn"
                   >

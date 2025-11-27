@@ -24,6 +24,21 @@ class GameService {
     return response.data.data;
   }
 
+  async getShopItems(): Promise<any[]> {
+    const response = await api.get('/shop');
+    return response.data.data;
+  }
+
+  async buyItem(itemId: string, quantity: number = 1): Promise<Player> {
+    const response = await api.post('/shop/buy', { itemId, quantity });
+    return response.data.data.player;
+  }
+
+  async getAnalytics(): Promise<any> {
+    const response = await api.get('/analytics');
+    return response.data.data;
+  }
+
   async getQuests(): Promise<Quest[]> {
     const response = await api.get('/quests');
     const backendQuests = response.data.data;

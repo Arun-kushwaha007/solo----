@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Player, Quest, Item, LifeCategory } from '../types';
 import gameService from '../services/game.service';
+import authService from '../services/auth.service';
 
 interface GameContextType {
   player: Player | null;
@@ -13,7 +14,9 @@ interface GameContextType {
   updateTaskProgress: (questId: number, taskId: string, amount?: number) => Promise<void>;
   completeQuest: (questId: number) => Promise<{ leveledUp: boolean }>;
   allocateStatPoint: (category: LifeCategory, stat: 'primary' | 'secondary' | 'tertiary') => Promise<void>;
+  buyItem: (itemId: string, quantity?: number) => Promise<boolean>;
   refreshData: () => Promise<void>;
+  logout: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -101,12 +104,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const buyItem = async (itemId: string, quantity: number = 1) => {
+    try {
+      const updatedPlayer = await gameService.buyItem(itemId, quantity);
+      setPlayer(updatedPlayer);
+      return true;
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to buy item');
+      return false;
+    }
+  };
+
   return (
     <GameContext.Provider
       value={{
         player,
         quests,
-        inventory,
+        inventory: player?.inventory || [],
         loading,
         error,
         selectedCategory,
@@ -114,7 +128,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateTaskProgress,
         completeQuest,
         allocateStatPoint,
+        buyItem,
         refreshData,
+        logout: authService.logout,
       }}
     >
       {children}

@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 1000, // limit each IP to 1000 requests per windowMs
 });
 
 app.use('/api/', limiter);
@@ -31,6 +31,8 @@ app.use('/api/', limiter);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/player', require('./routes/player'));
 app.use('/api/quests', require('./routes/quest'));
+app.use('/api/shop', require('./routes/shop'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 // Health check
 app.get('/health', (req, res) => {

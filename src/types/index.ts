@@ -84,6 +84,11 @@ export interface Player {
   maxMp: number;
   fatigue: number;
   gold: number;
+  inventory: Item[];
+  achievements: { id: string; unlockedAt: string }[];
+  loginStreak: number;
+  lastLoginDate: string;
+  createdAt: string;
 }
 
 export interface QuestTask {

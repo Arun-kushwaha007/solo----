@@ -55,7 +55,34 @@ const playerSchema = new mongoose.Schema({
   mp: { type: Number, default: 100 },
   maxMp: { type: Number, default: 100 },
   fatigue: { type: Number, default: 0 },
-  gold: { type: Number, default: 0 }
+  gold: { type: Number, default: 0 },
+  inventory: [{
+    itemId: String,
+    name: String,
+    type: { type: String, enum: ['WEAPON', 'ARMOR', 'CONSUMABLE', 'KEY', 'MATERIAL'] },
+    rarity: { type: String, enum: ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY'] },
+    description: String,
+    quantity: { type: Number, default: 1 },
+    effects: Object
+  }],
+  achievements: [{
+    id: String,
+    unlockedAt: { type: Date, default: Date.now }
+  }],
+  loginStreak: { type: Number, default: 1 },
+  lastLoginDate: { type: Date, default: Date.now },
+  questHistory: [{
+    date: { type: Date, default: Date.now },
+    questsCompleted: Number,
+    xpEarned: Number
+  }],
+  // System Awakening Fields
+  momentum: { type: Number, default: 0 }, // 0 to 100
+  lastCategoryAction: {
+    type: Map,
+    of: Date,
+    default: {}
+  }
 }, {
   timestamps: true
 });

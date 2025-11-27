@@ -361,7 +361,27 @@ router.post(
         userId: user._id,
         name: playerName || 'HUNTER',
         categories,
-        selectedCategories: selectedCategories || ['physical']
+        selectedCategories: selectedCategories || ['physical'],
+        inventory: [
+          {
+            itemId: 'starter_box',
+            name: 'WELCOME BOX',
+            type: 'CONSUMABLE',
+            rarity: 'RARE',
+            description: 'A gift for new hunters. Contains starter supplies.',
+            quantity: 1,
+            effects: { open: true }
+          },
+          {
+            itemId: 'hp_potion_small',
+            name: 'HEALTH POTION (S)',
+            type: 'CONSUMABLE',
+            rarity: 'COMMON',
+            description: 'Restores 20 HP.',
+            quantity: 3,
+            effects: { hp: 20 }
+          }
+        ]
       });
 
       // Generate quests for selected categories
