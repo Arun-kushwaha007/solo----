@@ -1,0 +1,30 @@
+
+@import "tailwindcss";
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  overflow: hidden; /* Prevent scrolling for the app-like feel */
+}
+
+/* Custom Scrollbar for the System feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
