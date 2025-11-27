@@ -13,9 +13,9 @@ const generateToken = (id) => {
   });
 };
 
-// Helper to generate personalized quests based on fitness level
-const generateDailyQuest = (fitnessLevel, goals) => {
-  const questTemplates = {
+// Quest templates for all categories
+const QUEST_TEMPLATES = {
+  physical: {
     beginner: {
       title: 'DAILY QUEST: FOUNDATION TRAINING',
       description: 'Build your foundation. Start small, grow strong.',
@@ -24,9 +24,9 @@ const generateDailyQuest = (fitnessLevel, goals) => {
         { id: 't1', label: 'PUSH-UPS', current: 0, target: 10 },
         { id: 't2', label: 'SIT-UPS', current: 0, target: 15 },
         { id: 't3', label: 'SQUATS', current: 0, target: 20 },
-        { id: 't4', label: 'WALKING', current: 0, target: 1, unit: 'KM' },
+        { id: 't4', label: 'WALKING', current: 0, target: 1, unit: 'KM' }
       ],
-      rewards: { xp: 30, gold: 500 },
+      rewards: { xp: 30, gold: 500 }
     },
     intermediate: {
       title: 'DAILY QUEST: STRENGTH BUILDING',
@@ -36,9 +36,9 @@ const generateDailyQuest = (fitnessLevel, goals) => {
         { id: 't1', label: 'PUSH-UPS', current: 0, target: 25 },
         { id: 't2', label: 'SIT-UPS', current: 0, target: 30 },
         { id: 't3', label: 'SQUATS', current: 0, target: 40 },
-        { id: 't4', label: 'RUNNING', current: 0, target: 3, unit: 'KM' },
+        { id: 't4', label: 'RUNNING', current: 0, target: 3, unit: 'KM' }
       ],
-      rewards: { xp: 50, gold: 1000 },
+      rewards: { xp: 50, gold: 1000 }
     },
     advanced: {
       title: 'DAILY QUEST: ELITE TRAINING',
@@ -48,13 +48,266 @@ const generateDailyQuest = (fitnessLevel, goals) => {
         { id: 't1', label: 'PUSH-UPS', current: 0, target: 50 },
         { id: 't2', label: 'SIT-UPS', current: 0, target: 50 },
         { id: 't3', label: 'SQUATS', current: 0, target: 100 },
-        { id: 't4', label: 'RUNNING', current: 0, target: 5, unit: 'KM' },
+        { id: 't4', label: 'RUNNING', current: 0, target: 5, unit: 'KM' }
       ],
-      rewards: { xp: 100, gold: 2000 },
+      rewards: { xp: 100, gold: 2000 }
+    }
+  },
+  mental: {
+    beginner: {
+      title: 'DAILY QUEST: KNOWLEDGE SEEKER',
+      description: 'Feed your mind. Knowledge is power.',
+      difficulty: 'E',
+      tasks: [
+        { id: 't1', label: 'READ', current: 0, target: 20, unit: 'PAGES' },
+        { id: 't2', label: 'LEARN NEW CONCEPT', current: 0, target: 1 },
+        { id: 't3', label: 'PRACTICE SKILL', current: 0, target: 30, unit: 'MIN' }
+      ],
+      rewards: { xp: 30, gold: 500 }
     },
+    intermediate: {
+      title: 'DAILY QUEST: MIND EXPANSION',
+      description: 'Sharpen your intellect. Master new skills.',
+      difficulty: 'D',
+      tasks: [
+        { id: 't1', label: 'READ', current: 0, target: 40, unit: 'PAGES' },
+        { id: 't2', label: 'COMPLETE COURSE MODULE', current: 0, target: 1 },
+        { id: 't3', label: 'PRACTICE SKILL', current: 0, target: 60, unit: 'MIN' },
+        { id: 't4', label: 'SOLVE PROBLEMS', current: 0, target: 3 }
+      ],
+      rewards: { xp: 50, gold: 1000 }
+    },
+    advanced: {
+      title: 'DAILY QUEST: INTELLECTUAL MASTERY',
+      description: 'Push the boundaries of your knowledge.',
+      difficulty: 'C',
+      tasks: [
+        { id: 't1', label: 'READ', current: 0, target: 60, unit: 'PAGES' },
+        { id: 't2', label: 'COMPLETE ADVANCED MODULE', current: 0, target: 1 },
+        { id: 't3', label: 'DEEP PRACTICE', current: 0, target: 120, unit: 'MIN' },
+        { id: 't4', label: 'SOLVE HARD PROBLEMS', current: 0, target: 5 }
+      ],
+      rewards: { xp: 100, gold: 2000 }
+    }
+  },
+  professional: {
+    beginner: {
+      title: 'DAILY QUEST: CAREER FOUNDATION',
+      description: 'Build your professional skills.',
+      difficulty: 'E',
+      tasks: [
+        { id: 't1', label: 'WORK ON PROJECT', current: 0, target: 1, unit: 'HOUR' },
+        { id: 't2', label: 'LEARN WORK SKILL', current: 0, target: 30, unit: 'MIN' },
+        { id: 't3', label: 'ORGANIZE TASKS', current: 0, target: 1 }
+      ],
+      rewards: { xp: 30, gold: 500 }
+    },
+    intermediate: {
+      title: 'DAILY QUEST: CAREER GROWTH',
+      description: 'Advance your professional journey.',
+      difficulty: 'D',
+      tasks: [
+        { id: 't1', label: 'WORK ON PROJECT', current: 0, target: 2, unit: 'HOURS' },
+        { id: 't2', label: 'NETWORK', current: 0, target: 1, unit: 'PERSON' },
+        { id: 't3', label: 'SKILL PRACTICE', current: 0, target: 1, unit: 'HOUR' }
+      ],
+      rewards: { xp: 50, gold: 1000 }
+    },
+    advanced: {
+      title: 'DAILY QUEST: PROFESSIONAL EXCELLENCE',
+      description: 'Lead and innovate in your field.',
+      difficulty: 'C',
+      tasks: [
+        { id: 't1', label: 'WORK ON PROJECT', current: 0, target: 4, unit: 'HOURS' },
+        { id: 't2', label: 'NETWORK', current: 0, target: 3, unit: 'PEOPLE' },
+        { id: 't3', label: 'MENTOR/TEACH', current: 0, target: 1, unit: 'HOUR' },
+        { id: 't4', label: 'INNOVATE', current: 0, target: 1, unit: 'IDEA' }
+      ],
+      rewards: { xp: 100, gold: 2000 }
+    }
+  },
+  creative: {
+    beginner: {
+      title: 'DAILY QUEST: CREATIVE SPARK',
+      description: 'Express yourself. Create something new.',
+      difficulty: 'E',
+      tasks: [
+        { id: 't1', label: 'CREATE', current: 0, target: 30, unit: 'MIN' },
+        { id: 't2', label: 'PRACTICE TECHNIQUE', current: 0, target: 15, unit: 'MIN' },
+        { id: 't3', label: 'FIND INSPIRATION', current: 0, target: 1 }
+      ],
+      rewards: { xp: 30, gold: 500 }
+    },
+    intermediate: {
+      title: 'DAILY QUEST: ARTISTIC GROWTH',
+      description: 'Refine your craft. Build your portfolio.',
+      difficulty: 'D',
+      tasks: [
+        { id: 't1', label: 'CREATE', current: 0, target: 60, unit: 'MIN' },
+        { id: 't2', label: 'PRACTICE TECHNIQUE', current: 0, target: 30, unit: 'MIN' },
+        { id: 't3', label: 'COMPLETE PIECE', current: 0, target: 1 }
+      ],
+      rewards: { xp: 50, gold: 1000 }
+    },
+    advanced: {
+      title: 'DAILY QUEST: CREATIVE MASTERY',
+      description: 'Push creative boundaries. Inspire others.',
+      difficulty: 'C',
+      tasks: [
+        { id: 't1', label: 'CREATE', current: 0, target: 120, unit: 'MIN' },
+        { id: 't2', label: 'MASTER TECHNIQUE', current: 0, target: 60, unit: 'MIN' },
+        { id: 't3', label: 'COMPLETE MAJOR PIECE', current: 0, target: 1 },
+        { id: 't4', label: 'SHARE WORK', current: 0, target: 1 }
+      ],
+      rewards: { xp: 100, gold: 2000 }
+    }
+  },
+  social: {
+    beginner: {
+      title: 'DAILY QUEST: SOCIAL CONNECTION',
+      description: 'Build meaningful relationships.',
+      difficulty: 'E',
+      tasks: [
+        { id: 't1', label: 'QUALITY TIME', current: 0, target: 30, unit: 'MIN' },
+        { id: 't2', label: 'REACH OUT', current: 0, target: 1, unit: 'PERSON' },
+        { id: 't3', label: 'LISTEN ACTIVELY', current: 0, target: 1 }
+      ],
+      rewards: { xp: 30, gold: 500 }
+    },
+    intermediate: {
+      title: 'DAILY QUEST: RELATIONSHIP BUILDING',
+      description: 'Strengthen your social bonds.',
+      difficulty: 'D',
+      tasks: [
+        { id: 't1', label: 'QUALITY TIME', current: 0, target: 60, unit: 'MIN' },
+        { id: 't2', label: 'REACH OUT', current: 0, target: 2, unit: 'PEOPLE' },
+        { id: 't3', label: 'HELP SOMEONE', current: 0, target: 1 }
+      ],
+      rewards: { xp: 50, gold: 1000 }
+    },
+    advanced: {
+      title: 'DAILY QUEST: SOCIAL LEADERSHIP',
+      description: 'Lead and inspire your community.',
+      difficulty: 'C',
+      tasks: [
+        { id: 't1', label: 'QUALITY TIME', current: 0, target: 120, unit: 'MIN' },
+        { id: 't2', label: 'NETWORK', current: 0, target: 5, unit: 'PEOPLE' },
+        { id: 't3', label: 'ORGANIZE EVENT', current: 0, target: 1 },
+        { id: 't4', label: 'MENTOR', current: 0, target: 1, unit: 'PERSON' }
+      ],
+      rewards: { xp: 100, gold: 2000 }
+    }
+  },
+  financial: {
+    beginner: {
+      title: 'DAILY QUEST: FINANCIAL AWARENESS',
+      description: 'Take control of your finances.',
+      difficulty: 'E',
+      tasks: [
+        { id: 't1', label: 'TRACK EXPENSES', current: 0, target: 1 },
+        { id: 't2', label: 'LEARN FINANCE CONCEPT', current: 0, target: 1 },
+        { id: 't3', label: 'REVIEW BUDGET', current: 0, target: 15, unit: 'MIN' }
+      ],
+      rewards: { xp: 30, gold: 500 }
+    },
+    intermediate: {
+      title: 'DAILY QUEST: WEALTH BUILDING',
+      description: 'Grow your financial knowledge and assets.',
+      difficulty: 'D',
+      tasks: [
+        { id: 't1', label: 'TRACK & ANALYZE', current: 0, target: 1 },
+        { id: 't2', label: 'LEARN INVESTING', current: 0, target: 30, unit: 'MIN' },
+        { id: 't3', label: 'SAVE/INVEST', current: 0, target: 1 },
+        { id: 't4', label: 'SIDE INCOME WORK', current: 0, target: 1, unit: 'HOUR' }
+      ],
+      rewards: { xp: 50, gold: 1000 }
+    },
+    advanced: {
+      title: 'DAILY QUEST: FINANCIAL MASTERY',
+      description: 'Build wealth and financial freedom.',
+      difficulty: 'C',
+      tasks: [
+        { id: 't1', label: 'PORTFOLIO REVIEW', current: 0, target: 1 },
+        { id: 't2', label: 'INVESTMENT RESEARCH', current: 0, target: 60, unit: 'MIN' },
+        { id: 't3', label: 'OPTIMIZE FINANCES', current: 0, target: 1 },
+        { id: 't4', label: 'INCOME STREAM WORK', current: 0, target: 2, unit: 'HOURS' }
+      ],
+      rewards: { xp: 100, gold: 2000 }
+    }
+  },
+  spiritual: {
+    beginner: {
+      title: 'DAILY QUEST: INNER PEACE',
+      description: 'Find calm in the chaos.',
+      difficulty: 'E',
+      tasks: [
+        { id: 't1', label: 'MEDITATE', current: 0, target: 10, unit: 'MIN' },
+        { id: 't2', label: 'GRATITUDE PRACTICE', current: 0, target: 1 },
+        { id: 't3', label: 'MINDFUL MOMENT', current: 0, target: 3 }
+      ],
+      rewards: { xp: 30, gold: 500 }
+    },
+    intermediate: {
+      title: 'DAILY QUEST: SPIRITUAL GROWTH',
+      description: 'Deepen your inner connection.',
+      difficulty: 'D',
+      tasks: [
+        { id: 't1', label: 'MEDITATE', current: 0, target: 20, unit: 'MIN' },
+        { id: 't2', label: 'JOURNAL', current: 0, target: 1 },
+        { id: 't3', label: 'GRATITUDE PRACTICE', current: 0, target: 1 },
+        { id: 't4', label: 'MINDFUL ACTIVITY', current: 0, target: 30, unit: 'MIN' }
+      ],
+      rewards: { xp: 50, gold: 1000 }
+    },
+    advanced: {
+      title: 'DAILY QUEST: SPIRITUAL MASTERY',
+      description: 'Achieve profound inner wisdom.',
+      difficulty: 'C',
+      tasks: [
+        { id: 't1', label: 'DEEP MEDITATION', current: 0, target: 40, unit: 'MIN' },
+        { id: 't2', label: 'REFLECTIVE JOURNAL', current: 0, target: 1 },
+        { id: 't3', label: 'SPIRITUAL STUDY', current: 0, target: 30, unit: 'MIN' },
+        { id: 't4', label: 'TEACH/SHARE WISDOM', current: 0, target: 1 }
+      ],
+      rewards: { xp: 100, gold: 2000 }
+    }
+  }
+};
+
+// Generate quests for selected categories
+const generateDailyQuests = (selectedCategories, categoryLevels) => {
+  const quests = [];
+  let questId = 1;
+
+  selectedCategories.forEach(category => {
+    const level = categoryLevels[category] || 'beginner';
+    const template = QUEST_TEMPLATES[category][level];
+    
+    quests.push({
+      questId: questId++,
+      category,
+      ...template
+    });
+  });
+
+  return quests;
+};
+
+// Initialize category progress based on level
+const initializeCategoryProgress = (level) => {
+  const baseStats = {
+    beginner: { primary: 8, secondary: 8, tertiary: 8 },
+    intermediate: { primary: 12, secondary: 12, tertiary: 10 },
+    advanced: { primary: 15, secondary: 15, tertiary: 12 }
   };
 
-  return questTemplates[fitnessLevel] || questTemplates.beginner;
+  return {
+    level: 1,
+    xp: 0,
+    xpToNextLevel: 100,
+    stats: baseStats[level] || baseStats.beginner,
+    availablePoints: 0
+  };
 };
 
 // @route   POST /api/auth/register
@@ -79,7 +332,7 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const { username, email, password, playerName, fitnessLevel, goals } = req.body;
+      const { username, email, password, playerName, selectedCategories, categoryLevels } = req.body;
 
       // Check if user already exists
       const userExists = await User.findOne({ $or: [{ email }, { username }] });
@@ -94,29 +347,36 @@ router.post(
         password,
       });
 
-      // Determine starting stats based on fitness level
-      const baseStats = {
-        beginner: { strength: 8, agility: 8, sense: 8, vitality: 8, intelligence: 8 },
-        intermediate: { strength: 12, agility: 12, sense: 10, vitality: 12, intelligence: 10 },
-        advanced: { strength: 15, agility: 15, sense: 12, vitality: 15, intelligence: 12 },
-      };
+      // Initialize categories
+      const categories = {};
+      const allCategories = ['physical', 'mental', 'professional', 'creative', 'social', 'financial', 'spiritual'];
+      
+      allCategories.forEach(cat => {
+        const level = categoryLevels && categoryLevels[cat] ? categoryLevels[cat] : 'beginner';
+        categories[cat] = initializeCategoryProgress(level);
+      });
 
-      const stats = baseStats[fitnessLevel] || baseStats.beginner;
-
-      // Create player profile with personalized data
+      // Create player profile
       const player = await Player.create({
         userId: user._id,
         name: playerName || 'HUNTER',
-        stats,
+        categories,
+        selectedCategories: selectedCategories || ['physical']
       });
 
-      // Create personalized daily quest
-      const questData = generateDailyQuest(fitnessLevel, goals);
-      await Quest.create({
-        userId: user._id,
-        questId: 1,
-        ...questData,
-      });
+      // Generate quests for selected categories
+      const questData = generateDailyQuests(
+        selectedCategories || ['physical'],
+        categoryLevels || { physical: 'beginner' }
+      );
+
+      // Create quests
+      for (const quest of questData) {
+        await Quest.create({
+          userId: user._id,
+          ...quest
+        });
+      }
 
       res.status(201).json({
         success: true,

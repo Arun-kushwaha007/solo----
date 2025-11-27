@@ -1,8 +1,9 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, AlertCircle, Loader, Sword } from 'lucide-react';
 import authService from '../services/auth.service';
-import { FitnessAssessment } from './FitnessAssessment';
+import { LifeAssessment } from './LifeAssessment';
+import type { LifeCategory } from '../types';
 
 interface SignupProps {
   onSuccess: () => void;
@@ -24,8 +25,11 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess, onSwitchToLogin }) =>
     setFormData({ ...formData, [field]: e.target.value });
   };
 
-  const handleAssessmentComplete = (fitnessLevel: 'beginner' | 'intermediate' | 'advanced', goals: string[]) => {
-    submitRegistration(fitnessLevel, goals);
+  const handleAssessmentComplete = (
+    selectedCategories: LifeCategory[],
+    categoryLevels: Record<LifeCategory, 'beginner' | 'intermediate' | 'advanced'>
+  ) => {
+    submitRegistration(selectedCategories, categoryLevels);
   };
 
   const handleInitialSubmit = (e: React.FormEvent) => {
@@ -37,7 +41,10 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess, onSwitchToLogin }) =>
     setShowAssessment(true);
   };
 
-  const submitRegistration = async (fitnessLevel: string, goals: string[]) => {
+  const submitRegistration = async (
+    selectedCategories: LifeCategory[],
+    categoryLevels: Record<LifeCategory, 'beginner' | 'intermediate' | 'advanced'>
+  ) => {
     setError('');
     setLoading(true);
 
@@ -45,8 +52,8 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess, onSwitchToLogin }) =>
       await authService.register({
         ...formData,
         playerName: formData.playerName || undefined,
-        fitnessLevel,
-        goals,
+        selectedCategories,
+        categoryLevels,
       } as any);
       onSuccess();
     } catch (err: any) {
@@ -59,7 +66,7 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess, onSwitchToLogin }) =>
   };
 
   if (showAssessment) {
-    return <FitnessAssessment onComplete={handleAssessmentComplete} />;
+    return <LifeAssessment onComplete={handleAssessmentComplete} />;
   }
 
   return (

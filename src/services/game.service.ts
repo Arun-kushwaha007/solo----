@@ -1,30 +1,10 @@
 import api from './api';
-import type { Player, Quest } from '../types';
+import type { Player, Quest, LifeCategory } from '../types';
 
 // Helper to map backend quest format to frontend format
-interface BackendQuest {
-  _id: string;
-  userId: string;
-  questId: number;
-  title: string;
-  description: string;
-  difficulty: string;
-  tasks: Array<{
-    id: string;
-    label: string;
-    current: number;
-    target: number;
-    unit?: string;
-  }>;
-  completed: boolean;
-  rewards: {
-    xp: number;
-    gold: number;
-  };
-}
-
 const mapBackendQuest = (backendQuest: any): Quest => ({
   id: backendQuest.questId,
+  category: backendQuest.category,
   title: backendQuest.title,
   description: backendQuest.description,
   difficulty: backendQuest.difficulty,
@@ -39,8 +19,8 @@ class GameService {
     return response.data.data;
   }
 
-  async allocateStat(stat: keyof Player['stats']): Promise<Player> {
-    const response = await api.post('/player/allocate-stat', { stat });
+  async allocateStat(category: LifeCategory, stat: 'primary' | 'secondary' | 'tertiary'): Promise<Player> {
+    const response = await api.post('/player/allocate-stat', { category, stat });
     return response.data.data;
   }
 

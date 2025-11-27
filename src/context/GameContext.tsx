@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { Player, Quest, Item } from '../types';
+import type { Player, Quest, Item, LifeCategory } from '../types';
 import gameService from '../services/game.service';
 
 interface GameContextType {
@@ -8,36 +8,15 @@ interface GameContextType {
   inventory: (Item | null)[];
   loading: boolean;
   error: string | null;
+  selectedCategory: LifeCategory;
+  setSelectedCategory: (category: LifeCategory) => void;
   updateTaskProgress: (questId: number, taskId: string, amount?: number) => Promise<void>;
   completeQuest: (questId: number) => Promise<{ leveledUp: boolean }>;
-  allocateStatPoint: (stat: keyof Player['stats']) => Promise<void>;
+  allocateStatPoint: (category: LifeCategory, stat: 'primary' | 'secondary' | 'tertiary') => Promise<void>;
   refreshData: () => Promise<void>;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
-
-const INITIAL_PLAYER: Player = {
-  name: "SUNG JIN-WOO",
-  job: "NONE",
-  title: "NONE",
-  level: 1,
-  xp: 0,
-  xpToNextLevel: 100,
-  hp: 100,
-  maxHp: 100,
-  mp: 10,
-  maxMp: 10,
-  fatigue: 0,
-  stats: {
-    strength: 10,
-    agility: 10,
-    sense: 10,
-    vitality: 10,
-    intelligence: 10,
-  },
-  availablePoints: 0,
-  gold: 0,
-};
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [player, setPlayer] = useState<Player | null>(null);
@@ -45,6 +24,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [inventory, _setInventory] = useState<(Item | null)[]>(Array(20).fill(null));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<LifeCategory>('physical');
 
   // Fetch initial data when component mounts
   const fetchGameData = async () => {
@@ -59,11 +39,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setPlayer(playerData);
       setQuests(questsData);
+      
+      // Set selected category to first selected category
+      if (playerData.selectedCategories && playerData.selectedCategories.length > 0) {
+        setSelectedCategory(playerData.selectedCategories[0]);
+      }
     } catch (err: any) {
       console.error('Failed to fetch game data:', err);
       setError(err.response?.data?.message || 'Failed to load game data');
-      // Use fallback data if API fails
-      setPlayer(INITIAL_PLAYER);
       setQuests([]);
     } finally {
       setLoading(false);
@@ -108,9 +91,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const allocateStatPoint = async (stat: keyof Player['stats']) => {
+  const allocateStatPoint = async (category: LifeCategory, stat: 'primary' | 'secondary' | 'tertiary') => {
     try {
-      const updatedPlayer = await gameService.allocateStat(stat);
+      const updatedPlayer = await gameService.allocateStat(category, stat);
       setPlayer(updatedPlayer);
     } catch (err: any) {
       console.error('Failed to allocate stat:', err);
@@ -126,6 +109,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         inventory,
         loading,
         error,
+        selectedCategory,
+        setSelectedCategory,
         updateTaskProgress,
         completeQuest,
         allocateStatPoint,

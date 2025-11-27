@@ -1,107 +1,75 @@
 const mongoose = require('mongoose');
 
+const categoryProgressSchema = new mongoose.Schema({
+  level: { type: Number, default: 1 },
+  xp: { type: Number, default: 0 },
+  xpToNextLevel: { type: Number, default: 100 },
+  stats: {
+    primary: { type: Number, default: 10 },
+    secondary: { type: Number, default: 10 },
+    tertiary: { type: Number, default: 10 }
+  },
+  availablePoints: { type: Number, default: 0 }
+});
+
 const playerSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    unique: true,
+    unique: true
   },
   name: {
     type: String,
     required: true,
-    default: 'SUNG JIN-WOO',
+    default: 'HUNTER'
   },
   job: {
     type: String,
-    default: 'NONE',
+    default: 'HUNTER'
   },
   title: {
     type: String,
-    default: 'NONE',
+    default: 'E-RANK HUNTER'
   },
-  level: {
+  overallLevel: {
     type: Number,
-    default: 1,
-    min: 1,
+    default: 1
   },
-  xp: {
-    type: Number,
-    default: 0,
-    min: 0,
+  categories: {
+    physical: { type: categoryProgressSchema, default: () => ({}) },
+    mental: { type: categoryProgressSchema, default: () => ({}) },
+    professional: { type: categoryProgressSchema, default: () => ({}) },
+    creative: { type: categoryProgressSchema, default: () => ({}) },
+    social: { type: categoryProgressSchema, default: () => ({}) },
+    financial: { type: categoryProgressSchema, default: () => ({}) },
+    spiritual: { type: categoryProgressSchema, default: () => ({}) }
   },
-  xpToNextLevel: {
-    type: Number,
-    default: 100,
+  selectedCategories: {
+    type: [String],
+    enum: ['physical', 'mental', 'professional', 'creative', 'social', 'financial', 'spiritual'],
+    default: []
   },
-  hp: {
-    type: Number,
-    default: 100,
-  },
-  maxHp: {
-    type: Number,
-    default: 100,
-  },
-  mp: {
-    type: Number,
-    default: 10,
-  },
-  maxMp: {
-    type: Number,
-    default: 10,
-  },
-  fatigue: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 100,
-  },
-  stats: {
-    strength: {
-      type: Number,
-      default: 10,
-    },
-    agility: {
-      type: Number,
-      default: 10,
-    },
-    sense: {
-      type: Number,
-      default: 10,
-    },
-    vitality: {
-      type: Number,
-      default: 10,
-    },
-    intelligence: {
-      type: Number,
-      default: 10,
-    },
-  },
-  availablePoints: {
-    type: Number,
-    default: 0,
-    min: 0,
-  },
-  gold: {
-    type: Number,
-    default: 0,
-    min: 0,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  hp: { type: Number, default: 100 },
+  maxHp: { type: Number, default: 100 },
+  mp: { type: Number, default: 100 },
+  maxMp: { type: Number, default: 100 },
+  fatigue: { type: Number, default: 0 },
+  gold: { type: Number, default: 0 }
+}, {
+  timestamps: true
 });
 
-// Update timestamp on save
-playerSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
+// Calculate overall level from category levels
+playerSchema.virtual('calculatedOverallLevel').get(function() {
+  const selectedCats = this.selectedCategories || [];
+  if (selectedCats.length === 0) return 1;
+  
+  const totalLevel = selectedCats.reduce((sum, cat) => {
+    return sum + (this.categories[cat]?.level || 1);
+  }, 0);
+  
+  return Math.floor(totalLevel / selectedCats.length);
 });
 
 module.exports = mongoose.model('Player', playerSchema);

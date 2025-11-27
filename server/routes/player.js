@@ -25,13 +25,19 @@ router.get('/', protect, async (req, res) => {
 });
 
 // @route   POST /api/player/allocate-stat
-// @desc    Allocate a stat point
+// @desc    Allocate a stat point for a specific category
 // @access  Private
 router.post('/allocate-stat', protect, async (req, res) => {
   try {
-    const { stat } = req.body;
+    const { category, stat } = req.body;
 
-    const validStats = ['strength', 'agility', 'sense', 'vitality', 'intelligence'];
+    const validCategories = ['physical', 'mental', 'professional', 'creative', 'social', 'financial', 'spiritual'];
+    const validStats = ['primary', 'secondary', 'tertiary'];
+
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ message: 'Invalid category' });
+    }
+
     if (!validStats.includes(stat)) {
       return res.status(400).json({ message: 'Invalid stat name' });
     }
@@ -42,13 +48,22 @@ router.post('/allocate-stat', protect, async (req, res) => {
       return res.status(404).json({ message: 'Player not found' });
     }
 
-    if (player.availablePoints <= 0) {
-      return res.status(400).json({ message: 'No available stat points' });
+    const categoryProgress = player.categories[category];
+    if (!categoryProgress) {
+      return res.status(400).json({ message: 'Category not found' });
+    }
+
+    if (categoryProgress.availablePoints <= 0) {
+      return res.status(400).json({ message: 'No available stat points for this category' });
     }
 
     // Allocate the stat point
-    player.stats[stat] += 1;
-    player.availablePoints -= 1;
+    player.categories[category].stats[stat] += 1;
+    player.categories[category].availablePoints -= 1;
+    
+    // Mark the nested path as modified for Mongoose
+    player.markModified('categories');
+    
     await player.save();
 
     res.json({
@@ -56,8 +71,8 @@ router.post('/allocate-stat', protect, async (req, res) => {
       data: player,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error allocating stat:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

@@ -56,8 +56,8 @@ router.put('/:questId/task/:taskId', protect, async (req, res) => {
       data: quest,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error updating task:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
@@ -98,29 +98,48 @@ router.post('/:questId/complete', protect, async (req, res) => {
       return res.status(404).json({ message: 'Player not found' });
     }
 
-    // Add XP and check for level up
-    let newXp = player.xp + quest.rewards.xp;
-    let newLevel = player.level;
-    let newXpToNext = player.xpToNextLevel;
-    let newPoints = player.availablePoints;
+    // Get the quest category
+    const category = quest.category;
+    const categoryProgress = player.categories[category];
 
-    // Level up logic
+    // Add XP to the specific category and check for level up
+    let newXp = categoryProgress.xp + quest.rewards.xp;
+    let newLevel = categoryProgress.level;
+    let newXpToNext = categoryProgress.xpToNextLevel;
+    let newPoints = categoryProgress.availablePoints;
+    let leveledUp = false;
+
+    // Level up logic for this category
     while (newXp >= newXpToNext) {
       newXp -= newXpToNext;
       newLevel++;
       newXpToNext = Math.floor(newXpToNext * 1.5);
       newPoints += 3;
+      leveledUp = true;
+      
       // Heal on level up
       player.hp = player.maxHp;
       player.mp = player.maxMp;
       player.fatigue = 0;
     }
 
-    player.level = newLevel;
-    player.xp = newXp;
-    player.xpToNextLevel = newXpToNext;
-    player.availablePoints = newPoints;
+    // Update category progress
+    player.categories[category].level = newLevel;
+    player.categories[category].xp = newXp;
+    player.categories[category].xpToNextLevel = newXpToNext;
+    player.categories[category].availablePoints = newPoints;
+    
+    // Add gold
     player.gold += quest.rewards.gold;
+
+    // Recalculate overall level (average of selected category levels)
+    const selectedCats = player.selectedCategories || [];
+    if (selectedCats.length > 0) {
+      const totalLevel = selectedCats.reduce((sum, cat) => {
+        return sum + (player.categories[cat]?.level || 1);
+      }, 0);
+      player.overallLevel = Math.floor(totalLevel / selectedCats.length);
+    }
 
     await player.save();
 
@@ -129,12 +148,12 @@ router.post('/:questId/complete', protect, async (req, res) => {
       data: {
         quest,
         player,
-        leveledUp: newLevel > player.level,
+        leveledUp,
       },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error completing quest:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

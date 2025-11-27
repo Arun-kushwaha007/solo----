@@ -1,59 +1,53 @@
 const mongoose = require('mongoose');
 
-const taskSchema = new mongoose.Schema({
-  id: String,
-  label: String,
-  current: {
-    type: Number,
-    default: 0,
-  },
-  target: Number,
-  unit: String,
-});
-
 const questSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: true
   },
   questId: {
     type: Number,
-    required: true,
+    required: true
+  },
+  category: {
+    type: String,
+    enum: ['physical', 'mental', 'professional', 'creative', 'social', 'financial', 'spiritual'],
+    required: true
   },
   title: {
     type: String,
-    required: true,
+    required: true
   },
-  description: String,
+  description: {
+    type: String,
+    required: true
+  },
   difficulty: {
     type: String,
     enum: ['E', 'D', 'C', 'B', 'A', 'S'],
-    default: 'E',
+    default: 'E'
   },
-  tasks: [taskSchema],
+  tasks: [{
+    id: String,
+    label: String,
+    current: { type: Number, default: 0 },
+    target: Number,
+    unit: String
+  }],
   completed: {
     type: Boolean,
-    default: false,
+    default: false
   },
-  completedAt: Date,
   rewards: {
-    xp: {
-      type: Number,
-      default: 0,
-    },
-    gold: {
-      type: Number,
-      default: 0,
-    },
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+    xp: Number,
+    gold: Number
+  }
+}, {
+  timestamps: true
 });
 
-// Compound index for userId and questId
+// Compound index for user and quest ID
 questSchema.index({ userId: 1, questId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Quest', questSchema);
