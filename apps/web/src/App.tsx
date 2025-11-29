@@ -14,6 +14,8 @@ import { QuestLog } from './components/QuestLog';
 import { Inventory } from './components/Inventory';
 import { Login } from './components/Login';
 import { Signup } from './components/Signup';
+import { ForgotPassword } from './components/auth/ForgotPassword';
+import { ResetPassword } from './components/auth/ResetPassword';
 
 const GameContent = () => {
   const [activeTab, setActiveTab] = useState<'status' | 'quests' | 'inventory' | 'dashboard'>('status');
@@ -113,6 +115,28 @@ function App() {
                   onSuccess={handleAuthSuccess}
                   onSwitchToLogin={() => setAuthView('login')}
                 />
+              )
+            }
+          />
+          
+          <Route
+            path="/forgot-password"
+            element={
+              authService.isAuthenticated() ? (
+                <Navigate to="/game" replace />
+              ) : (
+                <ForgotPassword />
+              )
+            }
+          />
+          
+          <Route
+            path="/reset-password/:token"
+            element={
+              authService.isAuthenticated() ? (
+                <Navigate to="/game" replace />
+              ) : (
+                <ResetPassword />
               )
             }
           />

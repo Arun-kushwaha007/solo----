@@ -1,14 +1,26 @@
 const express = require('express');
-const { getMe, updateDemographics, startCalibration, submitCalibration } = require('../controllers/profile');
+const {
+  getProfile,
+  updateProfile,
+  updateHealthConstraints,
+  updatePersona,
+  addGoal,
+  updateGoal,
+  deleteGoal,
+} = require('../controllers/profile.controller');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.use(protect); // All routes protected
+// All routes are protected
+router.use(protect);
 
-router.get('/me', getMe);
-router.put('/demographics', updateDemographics);
-router.post('/calibration/start', startCalibration);
-router.post('/calibration/submit', submitCalibration);
+router.get('/', getProfile);
+router.put('/', updateProfile);
+router.put('/health', updateHealthConstraints);
+router.put('/persona', updatePersona);
+router.post('/goals', addGoal);
+router.put('/goals/:goalId', updateGoal);
+router.delete('/goals/:goalId', deleteGoal);
 
 module.exports = router;

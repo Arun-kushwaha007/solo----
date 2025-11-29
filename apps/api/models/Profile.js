@@ -46,10 +46,81 @@ const ProfileSchema = new mongoose.Schema({
     gender: String,
   },
   
+  // New fields for enhanced profile
+  healthConstraints: {
+    injuries: [String], // Encrypted array
+    medicalConditions: [String], // Encrypted array
+    limitations: [String], // Encrypted array
+    dietaryRestrictions: [String],
+    fitnessLevel: {
+      type: String,
+      enum: ['beginner', 'intermediate', 'advanced', 'expert'],
+      default: 'beginner',
+    },
+  },
+  
+  persona: {
+    type: String,
+    default: '',
+    maxlength: 1000,
+  },
+  
+  goals: [{
+    title: String,
+    description: String,
+    category: String,
+    targetDate: Date,
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
+  
+  timezone: {
+    type: String,
+    default: 'Asia/Kolkata',
+  },
+  
+  preferences: {
+    notifications: {
+      email: { type: Boolean, default: true },
+      push: { type: Boolean, default: true },
+      questReminders: { type: Boolean, default: true },
+    },
+    theme: {
+      type: String,
+      enum: ['dark', 'light', 'system'],
+      default: 'dark',
+    },
+    language: {
+      type: String,
+      default: 'en',
+    },
+    questDifficulty: {
+      type: String,
+      enum: ['easy', 'normal', 'hard', 'extreme'],
+      default: 'normal',
+    },
+  },
+  
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// Update the updatedAt timestamp before saving
+ProfileSchema.pre('save', function(next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 module.exports = mongoose.model('Profile', ProfileSchema);

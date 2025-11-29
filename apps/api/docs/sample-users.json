@@ -1,0 +1,242 @@
+[
+  {
+    "_id": "user_admin_001",
+    "email": "admin@solo-leveling.com",
+    "name": "System Administrator",
+    "displayName": "System Admin",
+    "roles": ["user", "admin"],
+    "timezone": "Asia/Kolkata",
+    "persona": "System administrator with full access to manage the Solo Leveling platform.",
+    "healthFlags": [],
+    "isEmailVerified": true,
+    "lastLogin": "2025-11-30T04:00:00.000Z",
+    "encryptionMetadata": {
+      "healthFlagsEncrypted": false,
+      "encryptionVersion": "v1"
+    },
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "_id": "user_standard_001",
+    "email": "jinwoo@hunter.com",
+    "name": "Sung Jin-Woo",
+    "displayName": "Shadow Monarch",
+    "roles": ["user"],
+    "timezone": "Asia/Seoul",
+    "persona": "The weakest E-Rank hunter who became the strongest through the System. I arise from the shadows and protect humanity from the gates.",
+    "healthFlags": [],
+    "isEmailVerified": true,
+    "lastLogin": "2025-11-29T18:30:00.000Z",
+    "encryptionMetadata": {
+      "healthFlagsEncrypted": false,
+      "encryptionVersion": "v1"
+    },
+    "createdAt": "2025-01-15T08:00:00.000Z",
+    "profile": {
+      "stats": {
+        "strength": 95,
+        "agility": 92,
+        "intelligence": 88,
+        "vitality": 90,
+        "perception": 85
+      },
+      "level": 45,
+      "xp": 12500,
+      "rank": "S-Rank",
+      "title": "Shadow Monarch",
+      "demographics": {
+        "age": 24,
+        "height": 180,
+        "weight": 75,
+        "gender": "male"
+      },
+      "healthConstraints": {
+        "injuries": [],
+        "medicalConditions": [],
+        "limitations": [],
+        "dietaryRestrictions": [],
+        "fitnessLevel": "expert"
+      },
+      "persona": "A determined hunter who never gives up. I level up alone and protect those who cannot protect themselves.",
+      "goals": [
+        {
+          "title": "Reach Level 100",
+          "description": "Achieve maximum level through consistent daily quests",
+          "category": "Overall",
+          "targetDate": "2025-12-31",
+          "completed": false
+        },
+        {
+          "title": "Master Shadow Army",
+          "description": "Collect and command 100 shadow soldiers",
+          "category": "Skills",
+          "targetDate": "2025-06-30",
+          "completed": false
+        }
+      ],
+      "timezone": "Asia/Seoul",
+      "preferences": {
+        "notifications": {
+          "email": true,
+          "push": true,
+          "questReminders": true
+        },
+        "theme": "dark",
+        "language": "en",
+        "questDifficulty": "extreme"
+      }
+    }
+  },
+  {
+    "_id": "user_health_constraints_001",
+    "email": "hunter@example.com",
+    "name": "John Hunter",
+    "displayName": "Rising Hunter",
+    "roles": ["user"],
+    "timezone": "America/New_York",
+    "persona": "A beginner hunter working through injuries to become stronger. Every day is a step forward.",
+    "healthFlags": [
+      "encrypted:a1b2c3:iv123:knee_injury:tag456",
+      "encrypted:d4e5f6:iv789:asthma:tag012"
+    ],
+    "isEmailVerified": true,
+    "lastLogin": "2025-11-28T14:20:00.000Z",
+    "encryptionMetadata": {
+      "healthFlagsEncrypted": true,
+      "encryptionVersion": "v1"
+    },
+    "createdAt": "2025-02-01T10:00:00.000Z",
+    "profile": {
+      "stats": {
+        "strength": 15,
+        "agility": 12,
+        "intelligence": 18,
+        "vitality": 14,
+        "perception": 16
+      },
+      "level": 5,
+      "xp": 450,
+      "rank": "E-Rank",
+      "title": "Novice Hunter",
+      "demographics": {
+        "age": 28,
+        "height": 175,
+        "weight": 70,
+        "gender": "male"
+      },
+      "healthConstraints": {
+        "injuries": ["Previous knee injury"],
+        "medicalConditions": ["Mild asthma"],
+        "limitations": ["Avoid high-impact exercises"],
+        "dietaryRestrictions": ["Gluten-free"],
+        "fitnessLevel": "beginner"
+      },
+      "persona": "Recovering from injuries and building strength gradually. Taking it one quest at a time.",
+      "goals": [
+        {
+          "title": "Complete Rehabilitation",
+          "description": "Fully recover from knee injury through physical therapy quests",
+          "category": "Health",
+          "targetDate": "2025-06-01",
+          "completed": false
+        },
+        {
+          "title": "Build Endurance",
+          "description": "Run 5km without stopping",
+          "category": "Fitness",
+          "targetDate": "2025-04-30",
+          "completed": false
+        }
+      ],
+      "timezone": "America/New_York",
+      "preferences": {
+        "notifications": {
+          "email": true,
+          "push": false,
+          "questReminders": true
+        },
+        "theme": "dark",
+        "language": "en",
+        "questDifficulty": "easy"
+      }
+    }
+  },
+  {
+    "_id": "user_complete_profile_001",
+    "email": "hunter.pro@example.com",
+    "name": "Sarah Chen",
+    "displayName": "Phoenix Hunter",
+    "roles": ["user"],
+    "timezone": "Asia/Kolkata",
+    "persona": "A dedicated hunter balancing work, fitness, and personal growth. Rising from the ashes stronger every day.",
+    "healthFlags": [],
+    "isEmailVerified": true,
+    "lastLogin": "2025-11-30T02:15:00.000Z",
+    "encryptionMetadata": {
+      "healthFlagsEncrypted": false,
+      "encryptionVersion": "v1"
+    },
+    "createdAt": "2025-01-20T06:00:00.000Z",
+    "profile": {
+      "stats": {
+        "strength": 45,
+        "agility": 48,
+        "intelligence": 52,
+        "vitality": 42,
+        "perception": 50
+      },
+      "level": 22,
+      "xp": 5800,
+      "rank": "B-Rank",
+      "title": "Phoenix Hunter",
+      "demographics": {
+        "age": 26,
+        "height": 165,
+        "weight": 58,
+        "gender": "female"
+      },
+      "healthConstraints": {
+        "injuries": [],
+        "medicalConditions": [],
+        "limitations": [],
+        "dietaryRestrictions": ["Vegetarian"],
+        "fitnessLevel": "intermediate"
+      },
+      "persona": "Balancing career, fitness, and personal development. Every challenge is an opportunity to grow stronger.",
+      "goals": [
+        {
+          "title": "Reach A-Rank",
+          "description": "Level up to A-Rank hunter status",
+          "category": "Overall",
+          "targetDate": "2025-08-31",
+          "completed": false
+        },
+        {
+          "title": "Master Meditation",
+          "description": "Complete 100 consecutive days of meditation quests",
+          "category": "Intelligence",
+          "targetDate": "2025-05-15",
+          "completed": false
+        },
+        {
+          "title": "Complete Marathon",
+          "description": "Run a full marathon",
+          "category": "Agility",
+          "targetDate": "2025-10-01",
+          "completed": false
+        }
+      ],
+      "timezone": "Asia/Kolkata",
+      "preferences": {
+        "notifications": {
+          "email": true,
+          "push": true,
+          "questReminders": true
+        },
+        "theme": "dark",
+        "language": "en",
+        "questDifficulty": "normal"
+      }
+    }
+  }
+]

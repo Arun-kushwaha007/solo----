@@ -21,6 +21,26 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add a name'],
   },
+  displayName: {
+    type: String,
+    default: function() {
+      return this.name;
+    },
+  },
+  timezone: {
+    type: String,
+    default: 'Asia/Kolkata',
+  },
+  persona: {
+    type: String,
+    default: '',
+    maxlength: 500,
+  },
+  healthFlags: {
+    type: [String],
+    default: [],
+    select: false, // Encrypted sensitive data
+  },
   roles: {
     type: [String],
     enum: ['user', 'admin'],
@@ -29,6 +49,19 @@ const UserSchema = new mongoose.Schema({
   isEmailVerified: {
     type: Boolean,
     default: false,
+  },
+  lastLogin: {
+    type: Date,
+  },
+  encryptionMetadata: {
+    healthFlagsEncrypted: {
+      type: Boolean,
+      default: false,
+    },
+    encryptionVersion: {
+      type: String,
+      default: 'v1',
+    },
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
