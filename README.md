@@ -1,73 +1,94 @@
-# React + TypeScript + Vite
+# Solo Leveling - Life RPG
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> "I alone level up."
 
-Currently, two official plugins are available:
+A gamified productivity application that turns your life into an RPG. Track your habits, complete quests, and level up your real-world stats. Built with the MERN stack and designed for a premium, immersive experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Project Overview
 
-## React Compiler
+**Solo Leveling** is a web application designed to help users gamify their self-improvement journey. Inspired by the popular manhwa, it allows users to track their progress in various categories (Intelligence, Strength, etc.), manage daily tasks as "quests," and earn rewards to upgrade their avatar and abilities.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🛠 Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, Framer Motion
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB
+- **Authentication:** JWT (JSON Web Tokens)
+- **State Management:** React Context API
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## ✨ Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Current Features (MVP)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **🛡️ Authentication System**: Secure Login and Signup functionality.
+- **📊 Dashboard**: Overview of player stats, current level, and active quests.
+- **📈 Status Screen**: Detailed breakdown of attributes (Strength, Agility, Intelligence, etc.) and player progression.
+- **📜 Quest Log**: Management system for daily, weekly, and main quests.
+- **🎒 Inventory & Shop**: System to manage items and purchase upgrades/rewards.
+- **🆙 Leveling System**: XP calculation and level-up celebrations.
+- **📉 Analytics**: Visual representation of productivity and stat growth over time.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🚧 Status
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Current Status:** Active Development / MVP Phase
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Core game loop (Quest -> XP -> Level Up) is implemented.
+- UI/UX is being polished for a "System" aesthetic.
+- Backend API is functional for core features.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🔮 Future Roadmap
+
+- [ ] **Dungeons & Raids**: Boss battles for completing major milestones.
+- [ ] **Social Features**: Guilds, party systems, and leaderboards.
+- [ ] **Mobile App**: Native mobile experience for on-the-go tracking.
+- [ ] **Class System**: Job changes and specialized skill trees.
+- [ ] **Achievements**: Badges and titles for specific accomplishments.
+
+## 📦 Installation & Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   # Install server dependencies
+   cd server
+   npm install
+
+   # Install client dependencies
+   cd ../
+   npm install
+   ```
+
+3. **Environment Setup**
+
+   - Create a `.env` file in the `server` directory with:
+     ```
+     PORT=5000
+     MONGO_URI=your_mongodb_uri
+     JWT_SECRET=your_jwt_secret
+     ```
+
+4. **Run the Application**
+
+   ```bash
+   # Start the backend
+   cd server
+   npm run dev
+
+   # Start the frontend (in a new terminal)
+   cd ../
+   npm run dev
+   ```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.

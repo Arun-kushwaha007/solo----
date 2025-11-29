@@ -1,5 +1,5 @@
 {
-  "name": "solo-leveling-server",
+  "name": "@solo/api",
   "version": "1.0.0",
   "description": "Backend API for Solo Leveling game",
   "main": "server.js",
@@ -8,20 +8,27 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["game", "solo-leveling", "api"],
+  "keywords": [
+    "game",
+    "solo-leveling",
+    "api"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^8.0.0",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.3.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
     "express-validator": "^7.0.1",
-    "express-rate-limit": "^7.1.5"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.3.0",
+    "nodemon": "^3.0.2",
+    "supertest": "^7.1.4"
   }
 }
