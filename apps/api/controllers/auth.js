@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -11,12 +12,15 @@ exports.register = async (req, res, next) => {
     const user = await User.create({
       name,
       email,
-      password
+      password,
     });
 
     sendTokenResponse(user, 200, res);
   } catch (err) {
-    res.status(400).json({ success: false, error: err.message });
+    if (err.code === 11000) {
+      return res.status(400).json({ success: false, error: 'Email already exists' });
+    }
+    next(err);
   }
 };
 
@@ -48,7 +52,7 @@ exports.login = async (req, res, next) => {
 
     sendTokenResponse(user, 200, res);
   } catch (err) {
-    res.status(400).json({ success: false, error: err.message });
+    next(err);
   }
 };
 
@@ -61,25 +65,25 @@ exports.getMe = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: user
+      data: user,
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    next(err);
   }
 };
 
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '30d'
+  const token = jwt.sign({ id: user._id, roles: user.roles }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || '30d',
   });
 
   const options = {
     expires: new Date(
       Date.now() + (process.env.JWT_COOKIE_EXPIRE || 30) * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
   };
 
   if (process.env.NODE_ENV === 'production') {
@@ -91,8 +95,12 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({
       success: true,
-      token
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        roles: user.roles,
+      },
     });
 };
-
-const jwt = require('jsonwebtoken');
