@@ -34,6 +34,9 @@ app.use('/api/quests', require('./routes/quest'));
 app.use('/api/shop', require('./routes/shop'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/safety', require('./routes/safety'));
+app.use('/api/profile', require('./routes/profile'));
+app.use('/api/leveling', require('./routes/leveling'));
+app.use('/api/quests', require('./routes/quest'));
 
 // Health check
 app.get('/health', (req, res) => {
