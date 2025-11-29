@@ -16,6 +16,7 @@ import { Login } from './components/Login';
 import { Signup } from './components/Signup';
 import { ForgotPassword } from './components/auth/ForgotPassword';
 import { ResetPassword } from './components/auth/ResetPassword';
+import { BaselineProgressPage } from './components/baseline/BaselineProgressPage';
 
 const GameContent = () => {
   const [activeTab, setActiveTab] = useState<'status' | 'quests' | 'inventory' | 'dashboard'>('status');
@@ -138,6 +139,15 @@ function App() {
               ) : (
                 <ResetPassword />
               )
+            }
+          />
+          
+          <Route
+            path="/baseline"
+            element={
+              <ProtectedRoute>
+                <BaselineProgressPage />
+              </ProtectedRoute>
             }
           />
           
