@@ -108,6 +108,7 @@ class BaselineCollector {
 
     const now = new Date();
     const daysElapsed = Math.floor((now - baseline.startDate) / (1000 * 60 * 60 * 24));
+    console.log(`[Baseline] UpdateReadiness: StartDate=${baseline.startDate}, Now=${now}, DaysElapsed=${daysElapsed}`);
 
     // Check criteria
     const criteria = {
@@ -260,6 +261,7 @@ class BaselineCollector {
     }
 
     // Check if ready
+    console.log(`[Baseline] StopBaseline: ReadinessCriteria=${JSON.stringify(baseline.readinessCriteria)}`);
     if (!baseline.isReady()) {
       throw new Error('Baseline does not meet minimum requirements for processing');
     }

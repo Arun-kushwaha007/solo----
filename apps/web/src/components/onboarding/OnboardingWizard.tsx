@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Activity, Brain, CheckCircle2, ChevronRight, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { unlockStarterQuest } from '../../services/quests';
+import gameService from '../../services/game.service';
 import { useMetrics } from '../../hooks/useMetrics';
 
 interface OnboardingWizardProps {
@@ -26,7 +26,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onCl
 
   const handleComplete = async () => {
     track('onboarding_complete', { step: 3 });
-    await unlockStarterQuest();
+    try {
+      await gameService.startBaseline(7);
+    } catch (error) {
+      console.error('Failed to start baseline:', error);
+    }
     onClose();
     navigate('/game?tab=quests');
   };

@@ -50,6 +50,11 @@ const playerSchema = new mongoose.Schema({
     enum: ['physical', 'mental', 'professional', 'creative', 'social', 'financial', 'spiritual'],
     default: []
   },
+  unlockedSkills: [{
+    type: String, // SkillNode IDs
+    default: []
+  }],
+  availablePoints: { type: Number, default: 0 },
   hp: { type: Number, default: 100 },
   maxHp: { type: Number, default: 100 },
   mp: { type: Number, default: 100 },

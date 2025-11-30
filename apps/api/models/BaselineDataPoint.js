@@ -21,7 +21,7 @@ const BaselineDataPointSchema = new mongoose.Schema({
   },
   source: {
     type: String,
-    enum: ['manual', 'fitbit', 'apple_health', 'google_fit', 'garmin', 'whoop', 'oura', 'system'],
+    enum: ['manual', 'fitbit', 'apple_health', 'google_fit', 'garmin', 'whoop', 'oura', 'system', 'simulation'],
     default: 'manual',
   },
   category: {
@@ -92,7 +92,7 @@ BaselineDataPointSchema.statics.getByDateRange = async function(userId, startDat
 // Static method to count data points per category
 BaselineDataPointSchema.statics.countByCategory = async function(baselineId) {
   return this.aggregate([
-    { $match: { baselineId: mongoose.Types.ObjectId(baselineId), validated: true, outlier: false } },
+    { $match: { baselineId: new mongoose.Types.ObjectId(baselineId), validated: true, outlier: false } },
     { $group: { _id: '$category', count: { $sum: 1 } } },
   ]);
 };

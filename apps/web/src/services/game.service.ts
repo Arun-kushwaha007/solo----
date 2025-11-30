@@ -58,6 +58,21 @@ class GameService {
       leveledUp: response.data.data.leveledUp,
     };
   }
+
+  async startBaseline(duration: number = 7): Promise<any> {
+    const response = await api.post('/baseline/start', { duration });
+    return response.data.data;
+  }
+
+  async getBaselineProgress(): Promise<any> {
+    const response = await api.get('/baseline/progress');
+    return response.data.data;
+  }
+
+  async submitBaselineTest(testType: string, result: number): Promise<any> {
+    const response = await api.post(`/baseline/test/${testType}`, { result });
+    return response.data.data;
+  }
 }
 
 export default new GameService();

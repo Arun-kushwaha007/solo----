@@ -3,6 +3,34 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 const Player = require('../models/Player');
 
+// @route   GET /api/player/stats
+// @desc    Get detailed player stats including XP and skills
+// @access  Private
+router.get('/stats', protect, async (req, res) => {
+  try {
+    const player = await Player.findOne({ userId: req.user._id });
+
+    if (!player) {
+      return res.status(404).json({ message: 'Player not found' });
+    }
+
+    // Calculate total XP across all categories if needed, or just return what's there
+    // For now, returning the full player object is sufficient as it contains all stats
+    // We might want to enrich it with next level thresholds
+    
+    // TODO: Add next level XP info?
+    // For now, the client can calculate it or we can add it here.
+    
+    res.json({
+      success: true,
+      data: player,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // @route   GET /api/player
 // @desc    Get player data for current user
 // @access  Private

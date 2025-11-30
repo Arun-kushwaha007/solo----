@@ -15,9 +15,15 @@ import { HeroCard } from './dashboard/HeroCard';
 import { OnboardingWizard } from './onboarding/OnboardingWizard';
 import { StatRadar } from './ui/StatRadar';
 
+import type { Quest } from '../types';
+import { QuestCard } from './ui/QuestCard';
+import { Activity } from 'lucide-react';
+
 export const Dashboard: React.FC = () => {
   const { player } = useGame();
   const [showWizard, setShowWizard] = useState(false);
+  const [quests, setQuests] = useState<Quest[]>([]);
+  const [baselineProgress, setBaselineProgress] = useState<any>(null);
   const [analytics, setAnalytics] = useState<{
     radarData: any[];
     activityData: any[];
@@ -35,7 +41,7 @@ export const Dashboard: React.FC = () => {
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
-    loadAnalytics();
+    loadData();
     setTimeBasedGreeting();
   }, []);
 
@@ -46,14 +52,57 @@ export const Dashboard: React.FC = () => {
     else setGreeting('Good Evening');
   };
 
-  const loadAnalytics = async () => {
+  const loadData = async () => {
     try {
-      const data = await gameService.getAnalytics();
-      setAnalytics(data);
+      const [analyticsData, questsData, baselineData] = await Promise.all([
+        gameService.getAnalytics(),
+        gameService.getQuests(),
+        gameService.getBaselineProgress()
+      ]);
+      setAnalytics(analyticsData);
+      setQuests(questsData);
+      setBaselineProgress(baselineData);
     } catch (error) {
-      console.error('Failed to load analytics:', error);
+      console.error('Failed to load dashboard data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTaskClick = async (questId: number, taskId: string, taskLabel: string, current: number, target: number) => {
+    try {
+      // Optimistic update
+      setQuests(prev => prev.map(q => {
+        if (q.id === questId) {
+          return {
+            ...q,
+            tasks: q.tasks.map(t => t.id === taskId ? { ...t, current: Math.min(t.current + 1, t.target) } : t)
+          };
+        }
+        return q;
+      }));
+
+      await gameService.updateTask(questId, taskId, 1);
+    } catch (error) {
+      console.error('Failed to update task:', error);
+      loadData();
+    }
+  };
+
+  const handleQuestComplete = async (questId: number, questTitle: string, xpReward: number, goldReward: number) => {
+    try {
+      await gameService.completeQuest(questId);
+      
+      // Update local state
+      setQuests(prev => prev.map(q => q.id === questId ? { ...q, completed: true } : q));
+      
+      // Refresh analytics to show new XP/wins
+      const analyticsData = await gameService.getAnalytics();
+      setAnalytics(analyticsData);
+
+      console.log(`Quest Completed: ${questTitle} (+${xpReward} XP)`);
+    } catch (error) {
+      console.error('Failed to complete quest:', error);
     }
   };
 
@@ -142,6 +191,83 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Baseline Progress (New) */}
+          {baselineProgress?.active && (
+            <div className="space-y-4">
+              <div className="bg-system-blue/10 border border-system-blue/30 p-4 rounded-xl space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold text-white flex items-center gap-2">
+                    <Activity size={18} className="text-system-blue" />
+                    Baseline Collection
+                  </h3>
+                  <span className="text-xs font-mono text-system-blue animate-pulse">ACTIVE</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="bg-black/40 p-2 rounded">
+                    <div className="text-gray-500 text-xs">Days Remaining</div>
+                    <div className="text-white font-bold">{baselineProgress.daysRemaining}</div>
+                  </div>
+                  <div className="bg-black/40 p-2 rounded">
+                    <div className="text-gray-500 text-xs">Data Points</div>
+                    <div className="text-white font-bold">{baselineProgress.dataPointCount}</div>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400">
+                  System is passively collecting data to calibrate your profile. Continue your daily activities.
+                </div>
+              </div>
+
+              {/* Calibration Tests */}
+              <div className="bg-black/40 border border-gray-800 p-4 rounded-xl space-y-3">
+                <h3 className="font-bold text-white text-sm">Required Calibration Tests</h3>
+                <div className="space-y-2">
+                  {['pushups', 'plank', 'squats'].map(test => (
+                    <div key={test} className="flex items-center justify-between bg-black/20 p-2 rounded border border-gray-800">
+                      <span className="text-gray-300 capitalize">{test}</span>
+                      <button 
+                        onClick={() => {
+                          const val = prompt(`Enter result for ${test}:`);
+                          if (val) {
+                            gameService.submitBaselineTest(test, Number(val))
+                              .then(() => alert('Test submitted!'))
+                              .catch(e => alert('Failed: ' + e.message));
+                          }
+                        }}
+                        className="text-xs bg-system-blue px-2 py-1 rounded text-white hover:bg-blue-600"
+                      >
+                        Log Result
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Active Quests Section */}
+          <div className="space-y-4">
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <CheckCircle2 size={18} className="text-system-blue" />
+              Active Quests
+            </h3>
+            <div className="space-y-4">
+              {quests.filter(q => !q.completed).length === 0 ? (
+                <div className="text-gray-500 text-sm italic text-center py-4 bg-black/20 rounded-lg">
+                  No active quests. The system is waiting...
+                </div>
+              ) : (
+                quests.filter(q => !q.completed).map(quest => (
+                  <QuestCard 
+                    key={quest.id} 
+                    quest={quest} 
+                    onTaskClick={handleTaskClick}
+                    onComplete={handleQuestComplete}
+                  />
+                ))
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Center Column: Life Balance Radar */}
@@ -160,7 +286,7 @@ export const Dashboard: React.FC = () => {
             )}
           </div>
           
-          <StatRadar data={radarData} entropy={recommendation.entropy} />
+          <StatRadar stats={stats} />
         </div>
 
         {/* Right Column: Activity & Wins */}
