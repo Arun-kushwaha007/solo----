@@ -17,6 +17,7 @@ import { Signup } from './components/Signup';
 import { ForgotPassword } from './components/auth/ForgotPassword';
 import { ResetPassword } from './components/auth/ResetPassword';
 import { BaselineProgressPage } from './components/baseline/BaselineProgressPage';
+import { DemoPage } from './components/DemoPage';
 
 const GameContent = () => {
   const [searchParams] = useSearchParams();
@@ -166,6 +167,7 @@ function App() {
             }
           />
           
+          <Route path="/demo" element={<DemoPage />} />
           <Route path="/" element={<Navigate to={authService.isAuthenticated() ? "/game" : "/login"} replace />} />
         </Routes>
       </BrowserRouter>
