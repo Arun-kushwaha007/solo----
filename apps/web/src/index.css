@@ -1,13 +1,13 @@
 
 @import "tailwindcss";
+@import "./styles/tokens.css";
+
 :root {
   color-scheme: dark;
 }
 
 body {
-  background-color: #000;
-  color: #fff;
-  font-family: "Inter", sans-serif;
+  /* Token-based styles are now in tokens.css */
   overflow: hidden; /* Prevent scrolling for the app-like feel */
 }
 
