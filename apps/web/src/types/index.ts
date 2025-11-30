@@ -158,3 +158,4 @@ export const CATEGORY_STAT_NAMES: Record<
   },
   spiritual: { primary: "Mindfulness", secondary: "Peace", tertiary: "Wisdom" },
 };
+

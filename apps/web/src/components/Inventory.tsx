@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sword, Key, FlaskConical, Gem, Box, ShoppingBag, Coins } from 'lucide-react';
+import { Shield, Sword, Key, FlaskConical, Gem, Box, ShoppingBag, Coins, Zap, Target, Trophy } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 import gameService from '../services/game.service';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-import { EmptyState } from './common/EmptyState';
+import { MicroflowCard } from './common/MicroflowCard';
 import { DisabledCTA } from './common/DisabledCTA';
 import { createEarnGoldQuest, addMicroQuestToActive } from '../services/microQuests';
 
@@ -122,12 +122,22 @@ export const Inventory: React.FC = () => {
             >
               {inventory.length === 0 ? (
                 <div className="col-span-full">
-                  <EmptyState
-                    icon={Box}
-                    title="Inventory Empty"
-                    description="You haven't acquired any items yet. Visit the shop to gear up."
-                    actionLabel="Visit Shop"
-                    onAction={() => setActiveTab('shop')}
+                  <MicroflowCard
+                    headline="No items yet. Get started in 90 seconds."
+                    steps={[
+                      { label: 'Complete baseline', icon: Zap },
+                      { label: 'Unlock first quest', icon: Target },
+                      { label: 'Earn rewards', icon: Trophy },
+                    ]}
+                    previewContent={
+                      <div className="text-left text-xs text-gray-400">
+                        Complete quests to earn items and gold
+                      </div>
+                    }
+                    ctaLabel="Start Baseline"
+                    onCtaClick={() => navigate('/baseline')}
+                    analyticsEvent="emptystate_cta_click"
+                    analyticsProperties={{ location: 'inventory' }}
                   />
                 </div>
               ) : (

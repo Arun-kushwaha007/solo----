@@ -2,7 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, AlertTriangle, Gift } from 'lucide-react';
 import clsx from 'clsx';
-import { CATEGORY_INFO, Quest } from '../../types';
+import type { Quest } from '../../types';
+import { CATEGORY_INFO } from '../../types';
 
 interface QuestCardProps {
   quest: Quest;

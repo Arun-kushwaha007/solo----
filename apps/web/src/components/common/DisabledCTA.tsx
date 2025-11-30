@@ -33,7 +33,7 @@ export const DisabledCTA: React.FC<DisabledCTAProps> = ({
 
   const handleMicroCTAClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    track('earn_gold_cta_click' as any, {
+    track('earn_gold_cta_click', {
       requirement_type: requirement.type,
       requirement_amount: requirement.amount,
     });
@@ -41,7 +41,7 @@ export const DisabledCTA: React.FC<DisabledCTAProps> = ({
   };
 
   const handleInteract = () => {
-    track('disabled_cta_interact' as any, {
+    track('disabled_cta_interact', {
       requirement_type: requirement.type,
     });
   };

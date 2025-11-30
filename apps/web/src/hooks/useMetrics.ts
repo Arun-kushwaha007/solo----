@@ -7,10 +7,14 @@ type EventName =
   | 'quest_complete'
   | 'item_purchase'
   | 'level_up'
-  | 'feature_usage';
+  | 'feature_usage'
+  | 'emptystate_cta_click'
+  | 'earn_gold_cta_click'
+  | 'microflow_preview_open'
+  | 'disabled_cta_interact';
 
 interface EventProperties {
-  [key: string]: any;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export const useMetrics = () => {

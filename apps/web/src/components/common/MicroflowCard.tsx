@@ -16,7 +16,7 @@ interface MicroflowCardProps {
   ctaLabel: string;
   onCtaClick: () => void;
   analyticsEvent: string;
-  analyticsProperties?: Record<string, any>;
+  analyticsProperties?: Record<string, string | number | boolean>;
 }
 
 export const MicroflowCard: React.FC<MicroflowCardProps> = ({

@@ -144,34 +144,24 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-import { StatRadar } from './ui/StatRadar';
-
-// ... imports
-
-export const Dashboard: React.FC = () => {
-  // ...
-  return (
-    // ...
-          <div className="bg-black/40 border border-gray-800 p-6 rounded-2xl flex flex-col">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-bold text-white flex items-center gap-2">
-                <Brain size={18} className="text-purple-400" />
-                Life Balance
-              </h3>
-              {/* Entropy Warning */}
-              {(Object.values(recommendation.entropy || {}) as { isDecaying: boolean }[]).some((e) => e.isDecaying) && (
-                <div className="flex items-center gap-1 text-red-500 text-xs font-bold animate-pulse">
-                  <AlertTriangle size={12} />
-                  ENTROPY DETECTED
-                </div>
-              )}
-            </div>
-            
-            <StatRadar data={radarData} entropy={recommendation.entropy} />
+        {/* Center Column: Life Balance Radar */}
+        <div className="bg-black/40 border border-gray-800 p-6 rounded-2xl flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <Brain size={18} className="text-purple-400" />
+              Life Balance
+            </h3>
+            {/* Entropy Warning */}
+            {(Object.values(recommendation.entropy || {}) as { isDecaying: boolean }[]).some((e) => e.isDecaying) && (
+              <div className="flex items-center gap-1 text-red-500 text-xs font-bold animate-pulse">
+                <AlertTriangle size={12} />
+                ENTROPY DETECTED
+              </div>
+            )}
           </div>
-    // ...
-  );
-};
+          
+          <StatRadar data={radarData} entropy={recommendation.entropy} />
+        </div>
 
         {/* Right Column: Activity & Wins */}
         <div className="space-y-6">
