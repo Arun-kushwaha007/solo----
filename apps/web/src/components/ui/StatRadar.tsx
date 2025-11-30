@@ -3,7 +3,7 @@ import React from 'react';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
 interface StatRadarProps {
-  stats?: {
+  stats: {
     strength: number;
     endurance: number;
     focus: number;
@@ -13,21 +13,12 @@ interface StatRadarProps {
 }
 
 export const StatRadar: React.FC<StatRadarProps> = ({ stats }) => {
-  // Default values to prevent crashes if stats are missing
-  const safeStats = stats || {
-    strength: 0,
-    endurance: 0,
-    focus: 0,
-    resilience: 0,
-    social: 0,
-  };
-
   const data = [
-    { subject: 'STR', A: safeStats.strength, fullMark: 100 },
-    { subject: 'END', A: safeStats.endurance, fullMark: 100 },
-    { subject: 'FOC', A: safeStats.focus, fullMark: 100 },
-    { subject: 'RES', A: safeStats.resilience, fullMark: 100 },
-    { subject: 'SOC', A: safeStats.social, fullMark: 100 },
+    { subject: 'STR', A: stats.strength, fullMark: 100 },
+    { subject: 'END', A: stats.endurance, fullMark: 100 },
+    { subject: 'FOC', A: stats.focus, fullMark: 100 },
+    { subject: 'RES', A: stats.resilience, fullMark: 100 },
+    { subject: 'SOC', A: stats.social, fullMark: 100 },
   ];
 
   return (
@@ -59,11 +50,11 @@ export const StatRadar: React.FC<StatRadarProps> = ({ stats }) => {
             </tr>
           </thead>
           <tbody>
-            <tr><td>Strength</td><td>{safeStats.strength}</td></tr>
-            <tr><td>Endurance</td><td>{safeStats.endurance}</td></tr>
-            <tr><td>Focus</td><td>{safeStats.focus}</td></tr>
-            <tr><td>Resilience</td><td>{safeStats.resilience}</td></tr>
-            <tr><td>Social</td><td>{safeStats.social}</td></tr>
+            <tr><td>Strength</td><td>{stats.strength}</td></tr>
+            <tr><td>Endurance</td><td>{stats.endurance}</td></tr>
+            <tr><td>Focus</td><td>{stats.focus}</td></tr>
+            <tr><td>Resilience</td><td>{stats.resilience}</td></tr>
+            <tr><td>Social</td><td>{stats.social}</td></tr>
           </tbody>
         </table>
       </div>
