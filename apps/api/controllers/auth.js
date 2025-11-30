@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Player = require('../models/Player');
 const RefreshToken = require('../models/RefreshToken');
 const PasswordReset = require('../models/PasswordReset');
 const jwt = require('jsonwebtoken');
@@ -12,6 +13,11 @@ exports.register = async (req, res, next) => {
   try {
     const { name, email, password, displayName, timezone } = req.body;
 
+    // Validate request
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, error: 'Please provide name, email and password' });
+    }
+
     // Create user
     const user = await User.create({
       name,
@@ -19,6 +25,13 @@ exports.register = async (req, res, next) => {
       password,
       displayName: displayName || name,
       timezone: timezone || 'Asia/Kolkata',
+    });
+
+    // Create player document for the new user
+    await Player.create({
+      userId: user._id,
+      name: displayName || name,
+      selectedCategories: [], // Will be set during onboarding
     });
 
     // Send welcome email (non-blocking)

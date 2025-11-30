@@ -33,12 +33,13 @@ app.use('/api/onboarding', require('./routes/onboarding'));
 app.use('/api/baseline', require('./routes/baseline'));
 app.use('/api/profile', require('./routes/profile'));
 app.use('/api/player', require('./routes/player'));
-app.use('/api/quests', require('./routes/quests'));
-app.use('/api/inventory', require('./routes/inventory'));
+
+// app.use('/api/inventory', require('./routes/inventory'));
 app.use('/api/shop', require('./routes/shop'));
-app.use('/api/leaderboard', require('./routes/leaderboard'));
+// app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/leveling', require('./routes/leveling'));
 app.use('/api/quests', require('./routes/quest'));
+app.use('/api/dashboard', require('./routes/dashboard'));
 
 // Health check
 app.get('/health', (req, res) => {

@@ -50,14 +50,16 @@ export const Signup: React.FC<SignupProps> = ({ onSuccess, onSwitchToLogin }) =>
 
     try {
       await authService.register({
-        ...formData,
-        playerName: formData.playerName || undefined,
+        name: formData.username, // Backend expects 'name', not 'username'
+        email: formData.email,
+        password: formData.password,
+        displayName: formData.playerName || formData.username,
         selectedCategories,
         categoryLevels,
       } as any);
       onSuccess();
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || 'Registration failed. Please try again.';
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || err.response?.data?.errors?.[0]?.msg || 'Registration failed. Please try again.';
       setError(errorMsg);
       setShowAssessment(false);
     } finally {

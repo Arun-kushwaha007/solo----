@@ -4,20 +4,20 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } fro
 interface StatRadarProps {
   stats: {
     strength: number;
-    agility: number;
-    intelligence: number;
-    vitality: number;
-    perception: number;
+    endurance: number;
+    focus: number;
+    resilience: number;
+    social: number;
   };
 }
 
 const StatRadar: React.FC<StatRadarProps> = ({ stats }) => {
   const data = [
     { subject: 'STR', A: stats.strength, fullMark: 100 },
-    { subject: 'AGI', A: stats.agility, fullMark: 100 },
-    { subject: 'INT', A: stats.intelligence, fullMark: 100 },
-    { subject: 'VIT', A: stats.vitality, fullMark: 100 },
-    { subject: 'PER', A: stats.perception, fullMark: 100 },
+    { subject: 'END', A: stats.endurance, fullMark: 100 },
+    { subject: 'FOC', A: stats.focus, fullMark: 100 },
+    { subject: 'RES', A: stats.resilience, fullMark: 100 },
+    { subject: 'SOC', A: stats.social, fullMark: 100 },
   ];
 
   return (

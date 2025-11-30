@@ -37,4 +37,6 @@ api.interceptors.response.use(
   }
 );
 
+export const getDashboardSummary = () => api.get('/dashboard/summary');
+
 export default api;
