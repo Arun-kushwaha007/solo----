@@ -3,14 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Sword, Key, FlaskConical, Gem, Box, ShoppingBag, Coins } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 import gameService from '../services/game.service';
-import { showStatIncreaseToast } from './ToastProvider';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+
+import { EmptyState } from './common/EmptyState';
+import { DisabledCTA } from './common/DisabledCTA';
+import { createEarnGoldQuest, addMicroQuestToActive } from '../services/microQuests';
 
 export const Inventory: React.FC = () => {
   const { inventory, player, buyItem } = useGame();
   const [activeTab, setActiveTab] = useState<'inventory' | 'shop'>('inventory');
   const [shopItems, setShopItems] = useState<any[]>([]);
   const [loadingShop, setLoadingShop] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (activeTab === 'shop') {
@@ -39,8 +44,14 @@ export const Inventory: React.FC = () => {
     const success = await buyItem(item.id, 1);
     if (success) {
       toast.success(`Purchased ${item.name}!`);
-      // Play sound or animation here
     }
+  };
+
+  const handleEarnGoldCTA = async (requiredGold: number) => {
+    const quest = await createEarnGoldQuest(requiredGold);
+    await addMicroQuestToActive(quest);
+    navigate('/game?tab=quests');
+    toast.success(`Quest created: ${quest.title}`);
   };
 
   const getIcon = (type: string) => {
@@ -110,15 +121,14 @@ export const Inventory: React.FC = () => {
               className="grid grid-cols-4 md:grid-cols-5 gap-3"
             >
               {inventory.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-gray-500">
-                  <Box size={48} className="mx-auto mb-4 opacity-50" />
-                  <p>Inventory is empty</p>
-                  <button 
-                    onClick={() => setActiveTab('shop')}
-                    className="mt-4 text-system-blue hover:underline"
-                  >
-                    Visit the Shop
-                  </button>
+                <div className="col-span-full">
+                  <EmptyState
+                    icon={Box}
+                    title="Inventory Empty"
+                    description="You haven't acquired any items yet. Visit the shop to gear up."
+                    actionLabel="Visit Shop"
+                    onAction={() => setActiveTab('shop')}
+                  />
                 </div>
               ) : (
                 inventory.map((item, index) => {
@@ -195,18 +205,42 @@ export const Inventory: React.FC = () => {
                         <p className="text-xs text-gray-400 mt-1 line-clamp-2">{item.description}</p>
                       </div>
 
-                      <button
-                        onClick={() => handleBuy(item)}
-                        disabled={!canAfford}
-                        className={`mt-auto w-full py-2 rounded font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
-                          canAfford 
-                            ? 'bg-system-blue text-black hover:bg-white' 
-                            : 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                        }`}
-                      >
-                        <ShoppingBag size={16} />
-                        {canAfford ? 'PURCHASE' : 'NOT ENOUGH GOLD'}
-                      </button>
+                      {canAfford ? (
+                        <button
+                          onClick={() => handleBuy(item)}
+                          className="mt-auto w-full py-2 rounded font-bold text-sm flex items-center justify-center gap-2 transition-colors bg-system-blue text-black hover:bg-white"
+                        >
+                          <ShoppingBag size={16} />
+                          PURCHASE
+                        </button>
+                      ) : (
+                        <DisabledCTA
+                          reason={`Not enough gold — need ${item.cost}G`}
+                          requirement={{ type: 'gold', amount: item.cost }}
+                          microCTA={{
+                            label: `Earn ${item.cost}G (Complete 1 daily quest)`,
+                            onClick: () => handleEarnGoldCTA(item.cost),
+                          }}
+                          helperContent={
+                            <div className="text-xs space-y-2">
+                              <p className="font-medium text-white">Ways to earn gold:</p>
+                              <ul className="list-disc list-inside text-gray-400 space-y-1">
+                                <li>Complete daily quests</li>
+                                <li>Level up your categories</li>
+                                <li>Achieve milestones</li>
+                              </ul>
+                            </div>
+                          }
+                        >
+                          <button
+                            disabled
+                            className="mt-auto w-full py-2 rounded font-bold text-sm flex items-center justify-center gap-2 bg-gray-800 text-gray-500 cursor-not-allowed"
+                          >
+                            <ShoppingBag size={16} />
+                            NOT ENOUGH GOLD
+                          </button>
+                        </DisabledCTA>
+                      )}
                     </div>
                   );
                 })

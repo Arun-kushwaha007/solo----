@@ -25,3 +25,12 @@ export const completeQuest = async (questId: string) => {
   const response = await axios.post(`${API_URL}/${questId}/complete`, {}, getConfig());
   return response.data;
 };
+
+export const unlockStarterQuest = async () => {
+  // Mock implementation for now
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ success: true, message: 'Starter quest unlocked' });
+    }, 500);
+  });
+};

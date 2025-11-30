@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { GameProvider, useGame } from './context/GameContext';
 import { LevelUpModal } from './components/LevelUpModal';
 import { ToastProvider, showLevelUpToast } from './components/ToastProvider';
@@ -19,7 +19,13 @@ import { ResetPassword } from './components/auth/ResetPassword';
 import { BaselineProgressPage } from './components/baseline/BaselineProgressPage';
 
 const GameContent = () => {
-  const [activeTab, setActiveTab] = useState<'status' | 'quests' | 'inventory' | 'dashboard'>('status');
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState<'status' | 'quests' | 'inventory' | 'dashboard'>(
+    (initialTab && ['status', 'quests', 'inventory', 'dashboard'].includes(initialTab)) 
+      ? (initialTab as 'status' | 'quests' | 'inventory' | 'dashboard') 
+      : 'status'
+  );
   const { player, loading } = useGame();
   const [showLevelUp, setShowLevelUp] = useState(false);
   const prevCategoryLevelsRef = useRef<Record<string, number>>({});

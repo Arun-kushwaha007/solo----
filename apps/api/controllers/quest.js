@@ -1,6 +1,8 @@
 const Quest = require('../models/Quest');
 const UserQuest = require('../models/UserQuest');
 const LevelingService = require('../services/leveling');
+const QuestVerificationService = require('../services/questVerification');
+const XPRulesEngine = require('../services/xpRulesEngine');
 
 // @desc    Create a new quest (Admin/System)
 // @route   POST /api/quests
@@ -63,32 +65,97 @@ exports.acceptQuest = async (req, res, next) => {
 };
 
 // @desc    Complete a quest
-// @route   POST /api/quests/:id/complete
+// @route   PATCH /api/quests/:id/complete
 // @access  Private
 exports.completeQuest = async (req, res, next) => {
   try {
+    const { evidence, sensorData } = req.body;
+    
+    // Find active user quest
     const userQuest = await UserQuest.findOne({ user: req.user.id, quest: req.params.id });
     if (!userQuest) return res.status(404).json({ success: false, error: 'Quest not active' });
     if (userQuest.status === 'COMPLETED') return res.status(400).json({ success: false, error: 'Already completed' });
 
     const quest = await Quest.findById(req.params.id);
 
-    // Verify requirements (Skipped for MVP - assuming trusted client/mock)
-    
+    // 1. Verify Quest Completion
+    const verificationResult = await QuestVerificationService.verifyQuest(userQuest, evidence, sensorData);
+
+    if (!verificationResult.verified) {
+      if (verificationResult.requiresAdmin) {
+        userQuest.verificationStatus = 'PENDING';
+        if (evidence) userQuest.evidence = evidence;
+        if (sensorData) userQuest.sensorData = sensorData;
+        await userQuest.save();
+
+        return res.status(200).json({
+          success: true,
+          data: {
+            userQuest,
+            message: 'Quest submitted for verification',
+            verification: verificationResult
+          }
+        });
+      }
+
+      return res.status(400).json({
+        success: false,
+        error: 'Verification failed',
+        details: verificationResult
+      });
+    }
+
+    // 2. Calculate XP Rewards
+    const xpResult = await XPRulesEngine.calculateQuestXP(quest, userQuest, req.user.id);
+
+    // 3. Update UserQuest Status & Rewards
     userQuest.status = 'COMPLETED';
     userQuest.completedAt = Date.now();
+    userQuest.verificationStatus = 'VERIFIED';
+    userQuest.verificationMethod = verificationResult.method;
+    userQuest.xpAwarded = xpResult.totalXP;
+    userQuest.xpBreakdown = xpResult.breakdown;
+    
+    if (evidence) {
+        userQuest.evidence = evidence;
+    }
+    if (sensorData) {
+        userQuest.sensorData = sensorData;
+    }
+
     await userQuest.save();
 
-    // Award XP
-    const levelingResult = await LevelingService.addXp(req.user.id, quest.rewards.xp);
+    // 4. Apply XP to User Profile
+    const levelingResult = await LevelingService.addXp(req.user.id, xpResult.totalXP);
 
     res.status(200).json({
       success: true,
       data: {
         userQuest,
-        rewards: quest.rewards,
-        leveling: levelingResult
+        rewards: {
+            xp: xpResult.totalXP,
+            breakdown: xpResult.breakdown
+        },
+        leveling: levelingResult,
+        verification: verificationResult
       }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Get quest evidence
+// @route   GET /api/quests/:id/evidence
+// @access  Private
+exports.getQuestEvidence = async (req, res, next) => {
+  try {
+    const userQuest = await UserQuest.findOne({ user: req.user.id, quest: req.params.id });
+    if (!userQuest) return res.status(404).json({ success: false, error: 'Quest not found or not active' });
+
+    res.status(200).json({
+      success: true,
+      data: userQuest.evidence || []
     });
   } catch (err) {
     next(err);

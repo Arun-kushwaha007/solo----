@@ -53,7 +53,7 @@ const UserQuestSchema = new mongoose.Schema({
   },
   verificationMethod: {
     type: String,
-    enum: ['MANUAL', 'AUTO_SENSOR', 'ADMIN_OVERRIDE', 'NONE'],
+    enum: ['MANUAL', 'AUTO_SENSOR', 'AUTO_PHOTO', 'AUTO_VIDEO', 'ADMIN_OVERRIDE', 'NONE'],
   },
   verifiedBy: {
     type: mongoose.Schema.Types.ObjectId,

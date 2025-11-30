@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
-  BarChart, Bar, Tooltip, Cell
+  BarChart, Bar, Tooltip, Cell, ResponsiveContainer
 } from 'recharts';
 import { motion } from 'framer-motion';
 import { 
   Sun, Moon, Zap, CheckCircle2, TrendingUp, 
-  Target, Award, Brain, AlertTriangle
+  Award, Brain, AlertTriangle
 } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 import gameService from '../services/game.service';
 import { CATEGORY_INFO } from '../types';
 import { TheArchitect } from './TheArchitect';
+import { HeroCard } from './dashboard/HeroCard';
+import { OnboardingWizard } from './onboarding/OnboardingWizard';
+import { StatRadar } from './ui/StatRadar';
 
 export const Dashboard: React.FC = () => {
   const { player } = useGame();
+  const [showWizard, setShowWizard] = useState(false);
   const [analytics, setAnalytics] = useState<{
     radarData: any[];
     activityData: any[];
@@ -82,6 +85,10 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Hero Card (Onboarding) */}
+      <HeroCard onStart={() => setShowWizard(true)} />
+      <OnboardingWizard isOpen={showWizard} onClose={() => setShowWizard(false)} />
+
       {/* The Architect (System AI) */}
       <TheArchitect message={recommendation.message} mood={recommendation.mood} />
 
@@ -137,69 +144,34 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Middle Column: Life Balance Wheel (With Entropy) */}
-        <div className="bg-black/40 border border-gray-800 p-6 rounded-2xl flex flex-col">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-white flex items-center gap-2">
-              <Brain size={18} className="text-purple-400" />
-              Life Balance
-            </h3>
-            {/* Entropy Warning */}
-            {(Object.values(recommendation.entropy || {}) as { isDecaying: boolean }[]).some((e) => e.isDecaying) && (
-              <div className="flex items-center gap-1 text-red-500 text-xs font-bold animate-pulse">
-                <AlertTriangle size={12} />
-                ENTROPY DETECTED
-              </div>
-            )}
-          </div>
-          
-          <div className="flex-1 min-h-[250px] relative">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                <PolarGrid stroke="#333" strokeDasharray="3 3" />
-                <PolarAngleAxis 
-                  dataKey="subject" 
-                  tick={({ payload, x, y, textAnchor, stroke, radius }) => {
-                    // Check if this category has entropy
-                    const catName = payload.value.toLowerCase();
-                    const hasEntropy = recommendation.entropy?.[catName]?.isDecaying;
-                    
-                    return (
-                      <g className="recharts-layer recharts-polar-angle-axis-tick">
-                        <text
-                          radius={radius}
-                          stroke={stroke}
-                          x={x}
-                          y={y}
-                          className="recharts-text recharts-polar-angle-axis-tick-value"
-                          textAnchor={textAnchor}
-                          fill={hasEntropy ? "#ef4444" : "#6b7280"}
-                          fontSize={10}
-                          fontWeight={hasEntropy ? 700 : 500}
-                        >
-                          {payload.value} {hasEntropy ? "⚠️" : ""}
-                        </text>
-                      </g>
-                    );
-                  }}
-                />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar
-                  name="Balance"
-                  dataKey="A"
-                  stroke="#00A3FF"
-                  strokeWidth={2}
-                  fill="#00A3FF"
-                  fillOpacity={0.2}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-            {/* Center Icon */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-system-blue/20 pointer-events-none">
-              <Target size={40} />
+import { StatRadar } from './ui/StatRadar';
+
+// ... imports
+
+export const Dashboard: React.FC = () => {
+  // ...
+  return (
+    // ...
+          <div className="bg-black/40 border border-gray-800 p-6 rounded-2xl flex flex-col">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-white flex items-center gap-2">
+                <Brain size={18} className="text-purple-400" />
+                Life Balance
+              </h3>
+              {/* Entropy Warning */}
+              {(Object.values(recommendation.entropy || {}) as { isDecaying: boolean }[]).some((e) => e.isDecaying) && (
+                <div className="flex items-center gap-1 text-red-500 text-xs font-bold animate-pulse">
+                  <AlertTriangle size={12} />
+                  ENTROPY DETECTED
+                </div>
+              )}
             </div>
+            
+            <StatRadar data={radarData} entropy={recommendation.entropy} />
           </div>
-        </div>
+    // ...
+  );
+};
 
         {/* Right Column: Activity & Wins */}
         <div className="space-y-6">

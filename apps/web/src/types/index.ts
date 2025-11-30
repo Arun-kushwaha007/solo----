@@ -120,6 +120,9 @@ export interface Item {
   type: string;
   rarity: "COMMON" | "UNCOMMON" | "RARE" | "EPIC" | "LEGENDARY";
   iconName: string;
+  description: string;
+  cost: number;
+  quantity?: number;
 }
 
 // Stat names per category

@@ -13,9 +13,21 @@ export default {
           text: "#e5e5e5",
           panel: "rgba(10, 10, 10, 0.8)",
         },
+        theme: {
+          primary: "#3b82f6",
+          secondary: "#60a5fa",
+          bg: "#0a0a0a",
+          surface: "#111111",
+          accent: "#ef4444",
+          text: "#e5e5e5",
+          muted: "#a1a1aa",
+          success: "#10b981",
+          warning: "#f59e0b",
+          error: "#ef4444",
+        },
       },
       fontFamily: {
-        mono: ['"Courier New"', "Courier", "monospace"], // Placeholder for now
+        mono: ['"JetBrains Mono"', '"Fira Code"', "monospace"],
         sans: ['"Inter"', "sans-serif"],
       },
       boxShadow: {
