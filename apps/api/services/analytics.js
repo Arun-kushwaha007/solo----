@@ -23,6 +23,10 @@ exports.getXpTrend = async (userId, days = 7) => {
   // In production, you'd track XP changes in a separate collection
   const profile = await Profile.findOne({ user: userId });
   
+  if (!profile) {
+    return [];
+  }
+
   // Mock daily XP gain (in production, track this properly)
   const dailyXp = profile.xp / days;
   
@@ -43,6 +47,10 @@ exports.getXpTrend = async (userId, days = 7) => {
 exports.projectTrajectory = async (userId) => {
   const profile = await Profile.findOne({ user: userId });
   
+  if (!profile) {
+    return [];
+  }
+
   // Calculate average XP per week (mock for MVP)
   const weeklyXp = profile.xp / 4; // Assume 4 weeks of data
   

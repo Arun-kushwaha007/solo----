@@ -39,6 +39,7 @@ app.use('/api/shop', require('./routes/shop'));
 // app.use('/api/leaderboard', require('./routes/leaderboard'));
 app.use('/api/leveling', require('./routes/leveling'));
 app.use('/api/quests', require('./routes/quest'));
+app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 
 // Health check
