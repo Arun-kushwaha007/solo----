@@ -27,12 +27,22 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ isOpen, onCl
   const handleComplete = async () => {
     track('onboarding_complete', { step: 3 });
     try {
+      // Start baseline collection
       await gameService.startBaseline(7);
+      console.log('Baseline started successfully');
+      
+      // Close wizard and navigate to dashboard
+      onClose();
+      navigate('/game?tab=dashboard');
+      
+      // Show success message
+      setTimeout(() => {
+        alert('Welcome! Your baseline collection has started. Complete quests to earn XP and level up!');
+      }, 500);
     } catch (error) {
       console.error('Failed to start baseline:', error);
+      alert('Failed to start baseline. Please try again or contact support.');
     }
-    onClose();
-    navigate('/game?tab=quests');
   };
 
   return (

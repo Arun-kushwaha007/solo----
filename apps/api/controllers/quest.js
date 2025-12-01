@@ -25,10 +25,41 @@ exports.getQuests = async (req, res, next) => {
     const quests = await Quest.find();
     const userQuests = await UserQuest.find({ user: req.user.id });
 
+    console.log('=== QUEST API DEBUG ===');
+    console.log('User ID:', req.user.id);
+    console.log('Total quests in DB:', quests.length);
+    console.log('User quests:', userQuests.length);
+    console.log('=======================');
+
     const result = quests.map(q => {
       const uq = userQuests.find(uq => uq.quest.toString() === q._id.toString());
+      const questObj = q.toObject();
+      
+      // Add tasks array for frontend compatibility
+      // If quest has requirements, convert to tasks, otherwise use default
+      const tasks = [];
+      if (questObj.requirements && questObj.requirements.size > 0) {
+        for (const [key, value] of questObj.requirements) {
+          tasks.push({
+            id: key,
+            label: key.charAt(0).toUpperCase() + key.slice(1),
+            target: value,
+            current: uq?.progress?.get(key) || 0
+          });
+        }
+      } else {
+        // Default tasks for quests without requirements
+        tasks.push(
+          { id: 'pushups', label: 'Pushups', target: 10, current: 0 },
+          { id: 'squats', label: 'Squats', target: 10, current: 0 }
+        );
+      }
+      
       return {
-        ...q.toObject(),
+        ...questObj,
+        id: questObj._id,
+        tasks,
+        completed: uq?.status === 'COMPLETED',
         userStatus: uq ? uq.status : 'AVAILABLE',
         userProgress: uq ? uq.progress : {},
       };
@@ -36,6 +67,7 @@ exports.getQuests = async (req, res, next) => {
 
     res.status(200).json({ success: true, data: result });
   } catch (err) {
+    console.error('Quest API error:', err);
     next(err);
   }
 };

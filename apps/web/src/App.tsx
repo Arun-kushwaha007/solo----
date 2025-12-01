@@ -159,6 +159,24 @@ function App() {
           />
           
           <Route
+            path="/baseline/add-data"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/baseline" replace />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/game" replace />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
             path="/game"
             element={
               <ProtectedRoute>

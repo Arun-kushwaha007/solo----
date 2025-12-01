@@ -11,6 +11,17 @@ body {
   overflow: hidden; /* Prevent scrolling for the app-like feel */
 }
 
+/* Global Button Styles - Ensure all buttons are visible */
+button {
+  /* Ensure buttons have visible text by default */
+  color: var(--color-text-primary);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Custom Scrollbar for the System feel */
 ::-webkit-scrollbar {
   width: 8px;

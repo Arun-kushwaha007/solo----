@@ -3,14 +3,14 @@ import type { Player, Quest, LifeCategory } from '../types';
 
 // Helper to map backend quest format to frontend format
 const mapBackendQuest = (backendQuest: any): Quest => ({
-  id: backendQuest.questId,
+  id: backendQuest.id || backendQuest._id || backendQuest.questId,
   category: backendQuest.category,
   title: backendQuest.title,
   description: backendQuest.description,
   difficulty: backendQuest.difficulty,
-  tasks: backendQuest.tasks,
-  completed: backendQuest.completed,
-  rewards: backendQuest.rewards,
+  tasks: backendQuest.tasks || [],
+  completed: backendQuest.completed || false,
+  rewards: backendQuest.rewards || { xp: 0, gold: 0 },
 });
 
 class GameService {
@@ -70,7 +70,23 @@ class GameService {
   }
 
   async submitBaselineTest(testType: string, result: number): Promise<any> {
-    const response = await api.post(`/baseline/test/${testType}`, { result });
+    // Map simple test names to backend test types
+    const testTypeMap: Record<string, string> = {
+      'pushups': 'strength_pushups',
+      'plank': 'strength_plank',
+      'squats': 'strength_squats',
+      'walk': 'timed_walk',
+    };
+    
+    const backendTestType = testTypeMap[testType] || testType;
+    
+    const response = await api.post(`/baseline/test/${backendTestType}`, { 
+      results: result,
+      metadata: {
+        testType: testType,
+        timestamp: new Date().toISOString()
+      }
+    });
     return response.data.data;
   }
 }

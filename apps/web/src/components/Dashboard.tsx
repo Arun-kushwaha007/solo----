@@ -59,6 +59,18 @@ export const Dashboard: React.FC = () => {
         gameService.getQuests(),
         gameService.getBaselineProgress()
       ]);
+      
+      console.log('=== DASHBOARD DEBUG ===');
+      console.log('Quests data:', questsData);
+      console.log('Number of quests:', questsData?.length);
+      if (questsData && questsData.length > 0) {
+        console.log('First quest:', questsData[0]);
+        console.log('First quest tasks:', questsData[0].tasks);
+        console.log('First quest completed:', questsData[0].completed);
+      }
+      console.log('Active quests:', questsData?.filter(q => !q.completed));
+      console.log('=======================');
+      
       setAnalytics(analyticsData);
       setQuests(questsData);
       setBaselineProgress(baselineData);
@@ -222,7 +234,7 @@ export const Dashboard: React.FC = () => {
               <div className="bg-black/40 border border-gray-800 p-4 rounded-xl space-y-3">
                 <h3 className="font-bold text-white text-sm">Required Calibration Tests</h3>
                 <div className="space-y-2">
-                  {['pushups', 'plank', 'squats'].map(test => (
+                  {['pushups', 'plank'].map(test => (
                     <div key={test} className="flex items-center justify-between bg-black/20 p-2 rounded border border-gray-800">
                       <span className="text-gray-300 capitalize">{test}</span>
                       <button 
@@ -230,8 +242,14 @@ export const Dashboard: React.FC = () => {
                           const val = prompt(`Enter result for ${test}:`);
                           if (val) {
                             gameService.submitBaselineTest(test, Number(val))
-                              .then(() => alert('Test submitted!'))
-                              .catch(e => alert('Failed: ' + e.message));
+                              .then(() => {
+                                alert('Test submitted successfully!');
+                                loadData(); // Refresh data
+                              })
+                              .catch(e => {
+                                console.error('Test submission error:', e);
+                                alert('Failed: ' + (e.response?.data?.error || e.message || 'Unknown error'));
+                              });
                           }
                         }}
                         className="text-xs bg-system-blue px-2 py-1 rounded text-white hover:bg-blue-600"
@@ -241,6 +259,9 @@ export const Dashboard: React.FC = () => {
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Note: You must start baseline collection first before logging test results.
+                </p>
               </div>
             </div>
           )}
