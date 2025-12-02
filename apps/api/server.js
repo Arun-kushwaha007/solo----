@@ -43,6 +43,7 @@ app.use('/api/xp', require('./routes/xp'));
 app.use('/api/skills', require('./routes/skills'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/integrations', require('./routes/integration'));
 
 // Health check
 app.get('/health', (req, res) => {
